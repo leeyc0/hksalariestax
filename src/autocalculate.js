@@ -46,7 +46,12 @@ function autocalculate() {
           minimumState = tempState;
         }
         /* eslint no-console: "off" */
-        console.log({totalTax, parentCombo, siblingCombo, disabledSiblingCombo});
+        console.log({
+          totalTax: Object.assign({}, totalTax),
+          parentCombo: Object.assign({}, parentCombo),
+          siblingCombo: Object.assign({}, siblingCombo),
+          disabledSiblingCombo: Object.assign({}, disabledSiblingCombo),
+        });
       }
     }
   }
