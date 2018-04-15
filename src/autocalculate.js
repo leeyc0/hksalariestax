@@ -47,7 +47,7 @@ function autocalculate() {
         }
         /* eslint no-console: "off" */
         console.log({
-          totalTax: Object.assign({}, totalTax),
+          totalTax,
           parentCombo: Object.assign({}, parentCombo),
           siblingCombo: Object.assign({}, siblingCombo),
           disabledSiblingCombo: Object.assign({}, disabledSiblingCombo),
