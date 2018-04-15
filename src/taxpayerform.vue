@@ -30,17 +30,16 @@ import Vuex from 'vuex';
 import taxpayable from './taxpayable';
 import taxpayerformparentstd from './taxpayerformparentstd';
 import taxpayerforminputtextfield from './taxpayerforminputtextfield';
-import taxpayerformstore from "./taxpayerformstore.js";
 import {autocalculate} from './autocalculate';
 
 function addTaxPayer(event) {
-  taxpayerformstore.store.dispatch('addTaxPayer');
   event.preventDefault();
+  this.$store.dispatch('addTaxPayer');
 }
 
 function computeTax(event) {
   event.preventDefault();
-  taxpayerformstore.store.dispatch('computeTax');
+  this.$store.dispatch('computeTax');
 }
 
 export default {

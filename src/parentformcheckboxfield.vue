@@ -11,7 +11,7 @@ export default {
   computed: {
     value: {
       get: function() {return this.parentObject[this.field];},
-      set: function(newValue) {parentFormFieldUpdate(this.index, this.field, newValue);},
+      set: function(newValue) {parentFormFieldUpdate(this, newValue);},
     },
   },
 };

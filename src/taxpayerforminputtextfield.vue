@@ -6,15 +6,14 @@
 </template>
 
 <script>
-import taxpayerformstore from "./taxpayerformstore.js";
 
-function updateTaxPayerTextField(index, field, newValue) {
+function updateTaxPayerTextField(vueObj, newValue) {
   let args = {
-    index: index,
-    field: field,
+    index: vueObj.index,
+    field: vueObj.field,
     value: newValue,
   };
-  taxpayerformstore.store.dispatch('taxPayerFormTextFieldUpdate', args);
+  vueObj.$store.dispatch('taxPayerFormTextFieldUpdate', args);
 }
 
 export default {
@@ -23,13 +22,13 @@ export default {
   computed: {
     value: {
       get: function() {return this.taxpayer[this.field];},
-      set: function(newValue) {updateTaxPayerTextField(this.index, this.field, newValue);},
+      set: function(newValue) {updateTaxPayerTextField(this, newValue);},
     },
     type: function() {return this.field==="name" ? "text" : "number";},
   },
   methods: {
     deleteTaxPayer: function(event) {
-      taxpayerformstore.store.dispatch('deleteTaxPayer', this.index);
+      this.$store.dispatch('deleteTaxPayer', this.index);
       event.preventDefault();
     },
   },

@@ -14,22 +14,21 @@
 <script>
 "use strict";
 import Vuex from 'vuex';
-import taxpayerformstore from "./taxpayerformstore.js";
 import parentforminputtextfield from "./parentforminputtextfield";
 import parentformcheckboxfield from "./parentformcheckboxfield";
 
 function addParent(event) {
-  taxpayerformstore.store.dispatch('addParent');
+  this.$store.dispatch('addParent');
   event.preventDefault();
 }
 
-function parentFormFieldUpdate(index, field, newValue) {
+function parentFormFieldUpdate(vueObj, newValue) {
   let args = {
-    index: index,
-    field: field,
+    index: vueObj.index,
+    field: vueObj.field,
     value: newValue,
   };
-  taxpayerformstore.store.dispatch('parentFormFieldUpdate', args);
+  vueObj.$store.dispatch('parentFormFieldUpdate', args);
 }
 
 export default {

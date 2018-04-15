@@ -7,7 +7,6 @@
 
 <script>
 "use strict";
-import taxpayerformstore from "./taxpayerformstore.js";
 import {parentFormFieldUpdate} from "./parentform";
 
 export default {
@@ -16,13 +15,13 @@ export default {
   computed: {
     value: {
       get: function() {return this.parentObject[this.field];},
-      set: function(newValue) {parentFormFieldUpdate(this.index, this.field, newValue);},
+      set: function(newValue) {parentFormFieldUpdate(this, newValue);},
     },
     type: function() {return this.field==="name" ? "text" : "number";},
   },
   methods: {
     deleteParent: function(event) {
-      taxpayerformstore.store.dispatch('deleteParent', this.index);
+      this.$store.dispatch('deleteParent', this.index);
       event.preventDefault();
     },
   },

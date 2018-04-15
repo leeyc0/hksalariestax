@@ -7,23 +7,22 @@
 
 <script>
 "use strict";
-import taxpayerformstore from "./taxpayerformstore.js";
 
-function updateTaxPayerClaimParent(parentindex, taxpayerindex) {
+function updateTaxPayerClaimParent(vueObj, taxpayerindex) {
   let args = {
-    parentindex: parentindex,
+    parentindex: vueObj.parentindex,
     taxpayerindex: taxpayerindex,
   };
-  taxpayerformstore.store.dispatch('updateTaxPayerClaimParent', args);
+  vueObj.$store.dispatch('updateTaxPayerClaimParent', args);
 }
 
-function updateTaxPayerParentLivingTogether(parentindex, taxpayerindex, livingTogether) {
+function updateTaxPayerParentLivingTogether(vueObj, livingTogether) {
   let args = {
-    parentindex: parentindex,
-    taxpayerindex: taxpayerindex,
+    parentindex: vueObj.parentindex,
+    taxpayerindex: vueObj.taxpayerindex,
     livingTogether: livingTogether,
   };
-  taxpayerformstore.store.dispatch('updateTaxPayerParentLivingTogether', args);
+  vueObj.$store.dispatch('updateTaxPayerParentLivingTogether', args);
 }
 
 export default {
@@ -33,11 +32,11 @@ export default {
     name: function() {return this.parent.name;},
     claim: {
       get: function() {return this.parent.claimedBy;},
-      set: function(taxpayerindex) {updateTaxPayerClaimParent(this.parentindex, taxpayerindex);},
+      set: function(taxpayerindex) {updateTaxPayerClaimParent(this, taxpayerindex);},
     },
     livingTogether: {
       get: function() {return this.parent.livingTogether[this.taxpayerindex];},
-      set: function(livingTogether) {updateTaxPayerParentLivingTogether(this.parentindex, this.taxpayerindex, livingTogether);},
+      set: function(livingTogether) {updateTaxPayerParentLivingTogether(this, livingTogether);},
     },
     radioid: function() {return "taxpayerform-parent-claim-" + this.parentindex + "-" + this.taxpayerindex;},
     radioname: function() {return "taxpayerform-parent-claim-" + this.parentindex;},
