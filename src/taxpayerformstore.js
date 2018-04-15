@@ -11,6 +11,8 @@ const initialState = {
   taxpayerId: 1,
   parentId: 1,
   taxresults: {},
+  totalSiblings: 0,
+  totalDisabledSiblings: 0,
 };
 initialState.taxpayers[initialState.taxpayerId] = new obj.TaxPayer("納稅人1", 0, 0, 0, 0, 0, 0, 0, 0, 0);
 initialState.taxresults[initialState.taxpayerId] = {taxPayable: null};
@@ -112,6 +114,14 @@ function computeTax(state) {
   }
 }
 
+function updateTotalSiblings(state, totalSiblings) {
+  Vue.set(state, "totalSiblings", totalSiblings);
+}
+
+function updateTotalDisabledSiblings(state, totalDisabledSiblings) {
+  Vue.set(state, "totalDisabledSiblings", totalDisabledSiblings);
+}
+
 let store = new Vuex.Store({
   state: initialState,
   mutations: {
@@ -124,6 +134,8 @@ let store = new Vuex.Store({
     updateTaxPayerClaimParent,
     updateTaxPayerParentLivingTogether,
     computeTax,
+    updateTotalSiblings,
+    updateTotalDisabledSiblings,
   },
   actions: {
     addTaxPayer: () => store.commit('addTaxPayer'),
@@ -135,6 +147,8 @@ let store = new Vuex.Store({
     updateTaxPayerClaimParent: ({getters, state}, args) => store.commit('updateTaxPayerClaimParent', args),
     updateTaxPayerParentLivingTogether: ({getters, state}, args) => store.commit('updateTaxPayerParentLivingTogether', args),
     computeTax: () => store.commit("computeTax"),
+    updateTotalSiblings: ({getters, state}, totalSiblings) => store.commit("updateTotalSiblings", totalSiblings),
+    updateTotalDisabledSiblings: ({getters, state}, totalDisabledSiblings) => store.commit("updateTotalDisabledSiblings", totalDisabledSiblings),
   },
   getters: {
     firsttaxpayerId: (state) => parseInt(Object.keys(state.taxpayers)[0]),

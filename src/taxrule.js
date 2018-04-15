@@ -137,7 +137,6 @@ class TaxRule {
         progressiveTax += stepTax;
       }
     }
-    progressiveTax = progressiveTax;
 
     // standard rate - no allowances
     let stdRateTax = Math.floor(taxableIncomeStdRate * this.stdRate / 100);
@@ -227,4 +226,5 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
   return {tax2017, tax2018Provisional, tax2017Provisional, rebate, taxPayable};
 }
 
+/* eslint no-undef: "off" */
 module.exports = {TaxRule, taxRebate, taxPayable};

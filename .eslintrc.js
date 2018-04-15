@@ -4,7 +4,8 @@ module.exports = {
   },
   "extends": [
     "google",
-    "plugin:vue/essential"
+    "plugin:vue/essential",
+    "eslint:recommended",
   ],
   "rules": {
     "linebreak-style": "off",

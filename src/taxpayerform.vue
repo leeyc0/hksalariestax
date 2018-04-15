@@ -1,5 +1,7 @@
 <template>
 <form v-on:submit="computeTax">
+  <tr><td>受供養健全兄弟姊妹總數</td><td><input type="number" v-model="totalSiblings" /></td></tr>
+  <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" v-model="totalDisabledSiblings" /></td></tr>
   <table border="1">
     <tbody>
       <tr><td title="僅作識別之用，可隨意輸入">納稅人<img src="../icon/info.png" class="icon"></td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="name" /></tr>
@@ -17,7 +19,8 @@
     </tbody>
   </table>
   <input type="button" v-on:click="addTaxPayer" value="新增納稅人" />
-  <input type="submit" value="計算稅款" />
+  <input type="button" v-on:click="autocalculate" value="自動分配免稅額" />
+  <input type="submit" value="手動計算稅款" />
 </form>
 </template>
 
@@ -28,6 +31,7 @@ import taxpayable from './taxpayable';
 import taxpayerformparentstd from './taxpayerformparentstd';
 import taxpayerforminputtextfield from './taxpayerforminputtextfield';
 import taxpayerformstore from "./taxpayerformstore.js";
+import {autocalculate} from './autocalculate';
 
 function addTaxPayer(event) {
   taxpayerformstore.store.dispatch('addTaxPayer');
@@ -48,10 +52,19 @@ export default {
   },
   computed: {
     ...Vuex.mapState(['taxpayers', 'parents', 'taxresults']),
+    totalSiblings: {
+      get() {return this.$store.state.totalSiblings;},
+      set(value) {this.$store.dispatch('updateTotalSiblings', value);},
+    },
+    totalDisabledSiblings: {
+      get() {return this.$store.state.totalDisabledSiblings;},
+      set(value) {this.$store.dispatch('updateTotalDisabledSiblings', value);},
+    }
   },
   methods: {
     computeTax,
     addTaxPayer,
+    autocalculate,
   },
 };
 </script>
