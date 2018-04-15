@@ -68,41 +68,46 @@ function updateTaxPayerParentLivingTogether(state, args) {
   Vue.set(state.parents[args.parentindex], "livingTogether", newLivingTogether);
 }
 
-function computeTax(state) {
-  for (let id of Object.keys(state.taxpayers)) {
-    let income = state.taxpayers[id].income;
-    let mpf = state.taxpayers[id].mpf;
-    let otherDeductionsThisYear = state.taxpayers[id].otherDeductionsThisYear;
-    let otherDeductionsNextYear = state.taxpayers[id].otherDeductionsNextYear;
-    let otherAllowancesThisYear = state.taxpayers[id].otherAllowancesThisYear;
-    let otherAllowancesNextYear = state.taxpayers[id].otherAllowancesNextYear;
-    let parents = {livingTogether: 0, nonLivingTogether: 0, livingTogether55: 0, nonLivingTogether55: 0};
-    let siblings = state.taxpayers[id].siblings;
-    let disabledDependents = state.taxpayers[id].disabledSiblings;
-    let provisionalTax = state.taxpayers[id].provisionalTax;
-    for (let parentObject of Object.values(state.parents)) {
-      if (parentObject.claimedBy == id) {
-        if (parentObject.disabledParent) {
-          disabledDependents++;
-        }
-        if (parentObject.over65) {
-          if (parentObject.livingTogether[id]) {
-            parents.livingTogether++;
-          } else {
-            parents.nonLivingTogether++;
-          }
+function computeTaxPerTaxPayer(state, taxPayerId) {
+  let income = state.taxpayers[taxPayerId].income;
+  let mpf = state.taxpayers[taxPayerId].mpf;
+  let otherDeductionsThisYear = state.taxpayers[taxPayerId].otherDeductionsThisYear;
+  let otherDeductionsNextYear = state.taxpayers[taxPayerId].otherDeductionsNextYear;
+  let otherAllowancesThisYear = state.taxpayers[taxPayerId].otherAllowancesThisYear;
+  let otherAllowancesNextYear = state.taxpayers[taxPayerId].otherAllowancesNextYear;
+  let parents = {livingTogether: 0, nonLivingTogether: 0, livingTogether55: 0, nonLivingTogether55: 0};
+  let siblings = state.taxpayers[taxPayerId].siblings;
+  let disabledDependents = state.taxpayers[taxPayerId].disabledSiblings;
+  let provisionalTax = state.taxpayers[taxPayerId].provisionalTax;
+  for (let parentObject of Object.values(state.parents)) {
+    if (parentObject.claimedBy == taxPayerId) {
+      if (parentObject.disabledParent) {
+        disabledDependents++;
+      }
+      if (parentObject.over65) {
+        if (parentObject.livingTogether[taxPayerId]) {
+          parents.livingTogether++;
         } else {
-          if (parentObject.livingTogether[id]) {
-            parents.livingTogether55++;
-          } else {
-            parents.nonLivingTogether55++;
-          }
+          parents.nonLivingTogether++;
+        }
+      } else {
+        if (parentObject.livingTogether[taxPayerId]) {
+          parents.livingTogether55++;
+        } else {
+          parents.nonLivingTogether55++;
         }
       }
     }
-    let taxResult = taxrule.taxPayable(income, mpf, otherDeductionsThisYear, otherDeductionsNextYear,
-                                       otherAllowancesThisYear, otherAllowancesNextYear,
-                                       parents, siblings, disabledDependents, provisionalTax);
+  }
+  let taxResult = taxrule.taxPayable(income, mpf, otherDeductionsThisYear, otherDeductionsNextYear,
+                                     otherAllowancesThisYear, otherAllowancesNextYear,
+                                     parents, siblings, disabledDependents, provisionalTax);
+  return taxResult;
+}
+
+function computeTax(state) {
+  for (let id of Object.keys(state.taxpayers)) {
+    let taxResult = computeTaxPerTaxPayer(state, id);
     Vue.set(state.taxresults, id, taxResult);
   }
 }
@@ -137,3 +142,4 @@ let store = new Vuex.Store({
 });
 
 export default {store};
+export {computeTaxPerTaxPayer};
