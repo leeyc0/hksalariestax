@@ -1,5 +1,5 @@
 <template>
-<form>
+<form autocomplete="off">
   <table border="1">
     <tbody>
       <tr><td title="僅作識別之用，可隨意輸入">父母/祖父母/外祖父母<img src="../icon/info.png" class="icon"></td><parentforminputtextfield v-for="(parentObject,index) in parents" :key="index" :index="index" :parentObject="parentObject" field="name" /></tr>

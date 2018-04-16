@@ -1,7 +1,12 @@
 <template>
-<form v-on:submit="computeTax">
-  <tr><td>受供養健全兄弟姊妹總數</td><td><input type="number" v-model="totalSiblings" /></td></tr>
-  <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" v-model="totalDisabledSiblings" /></td></tr>
+<form autocomplete="off">
+  <fieldset style="margin-bottom: 20px; width: 30%;">
+    <legend>自動分配免稅額專用選項</legend>
+    <table>
+      <tr><td>受供養健全兄弟姊妹總數</td><td><input type="number" v-model="totalSiblings" /></td></tr>
+      <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" v-model="totalDisabledSiblings" /></td></tr>
+    </table>
+  </fieldset>
   <table border="1">
     <tbody>
       <tr><td title="僅作識別之用，可隨意輸入">納稅人<img src="../icon/info.png" class="icon"></td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="name" /></tr>
@@ -20,7 +25,7 @@
   </table>
   <input type="button" v-on:click="addTaxPayer" value="新增納稅人" />
   <input type="button" v-on:click="autocalculate" value="自動分配免稅額" />
-  <input type="submit" value="手動計算稅款" />
+  <input type="button" v-on:click="computeTax" value="手動計算稅款" />
 </form>
 </template>
 
