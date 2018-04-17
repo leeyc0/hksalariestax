@@ -22,7 +22,12 @@ export default {
   computed: {
     value: {
       get: function() {return this.taxpayer[this.field];},
-      set: function(newValue) {updateTaxPayerTextField(this, newValue);},
+      set: function(newValue) {
+        if (this.type == "number") {
+          newValue = parseInt(newValue);
+        }
+        updateTaxPayerTextField(this, newValue);
+      },
     },
     type: function() {return this.field==="name" ? "text" : "number";},
   },

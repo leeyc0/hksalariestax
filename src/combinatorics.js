@@ -21,7 +21,6 @@ function* distinglishableBallInBoxes(balls, boxes) {
 }
 
 function* indistinglishableBallInBoxes(numberOfBalls, boxes) {
-  numberOfBalls = parseInt(numberOfBalls);
   let i=0;
   let j=0;
   let numberOfBoxes = boxes.length;

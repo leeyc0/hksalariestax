@@ -1,6 +1,6 @@
 <template>
 <div>{{name}}
-  <input type="radio" :id="radioid" :name="radioname" :value="taxpayerindex" v-model="claim" /><label :for="radioid">申索</label>
+  <input type="radio" :id="radioid" :name="radioname" :value="taxpayerindex" v-model.number="claim" /><label :for="radioid">申索</label>
   <input type="checkbox" :id="checkboxid" v-model="livingTogether" /><label :for="checkboxid">全年同住</label>
 </div>
 </template>

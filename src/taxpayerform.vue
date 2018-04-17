@@ -3,8 +3,8 @@
   <fieldset style="margin-bottom: 20px; width: 30%;">
     <legend>自動分配免稅額專用選項</legend>
     <table>
-      <tr><td>受供養健全兄弟姊妹總數</td><td><input type="number" v-model="totalSiblings" /></td></tr>
-      <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" v-model="totalDisabledSiblings" /></td></tr>
+      <tr><td>受供養健全兄弟姊妹總數</td><td><input type="number" v-model.number="totalSiblings" /></td></tr>
+      <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" v-model.number="totalDisabledSiblings" /></td></tr>
     </table>
   </fieldset>
   <table border="1">
