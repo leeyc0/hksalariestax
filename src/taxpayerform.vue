@@ -20,6 +20,7 @@
       <tr><td>受供養父母/祖父母/外祖父母</td><taxpayerformparentstd v-for="(taxpayer,index) in taxpayers" :key=index :taxpayerindex=index :taxpayer="taxpayer" :parents="parents" /></tr>
       <tr><td>受供養健全兄弟姊妹數目</td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="siblings" /></tr>
       <tr><td>受供養傷殘兄弟姊妹數目</td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="disabledSiblings" /></tr>
+      <tr><td>受供養傷殘配偶及子女數目</td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="otherDisabledDependants" /></tr>
       <tr><td title="負數為應退還稅款">應繳/退還稅款<img src="../icon/info.png" class="icon"></td><taxpayable v-for="(taxresult,index) in taxresults" :key=index :index=index :taxresult="taxresult" /></tr>
     </tbody>
   </table>

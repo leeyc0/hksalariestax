@@ -14,12 +14,12 @@ const initialState = {
   totalSiblings: 0,
   totalDisabledSiblings: 0,
 };
-initialState.taxpayers[initialState.taxpayerId] = new obj.TaxPayer("納稅人1", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+initialState.taxpayers[initialState.taxpayerId] = new obj.TaxPayer("納稅人1", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 initialState.taxresults[initialState.taxpayerId] = {taxPayable: null};
 initialState.taxpayerId++;
 
 function addTaxPayer(state) {
-  Vue.set(state.taxpayers, state.taxpayerId, new obj.TaxPayer("納稅人"+state.taxpayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+  Vue.set(state.taxpayers, state.taxpayerId, new obj.TaxPayer("納稅人"+state.taxpayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
   Vue.set(state.taxresults, state.taxpayerId, {taxPayable: null});
   for (let id of Object.keys(state.parents)) {
     Vue.set(state.parents[id].livingTogether, state.taxpayerId, false);
@@ -79,7 +79,7 @@ function computeTaxPerTaxPayer(state, taxPayerId) {
   let otherAllowancesNextYear = state.taxpayers[taxPayerId].otherAllowancesNextYear;
   let parents = {livingTogether: 0, nonLivingTogether: 0, livingTogether55: 0, nonLivingTogether55: 0};
   let siblings = state.taxpayers[taxPayerId].siblings;
-  let disabledDependents = state.taxpayers[taxPayerId].disabledSiblings;
+  let disabledDependents = state.taxpayers[taxPayerId].disabledSiblings + state.taxpayers[taxPayerId].otherDisabledDependants;
   let provisionalTax = state.taxpayers[taxPayerId].provisionalTax;
   for (let parentObject of Object.values(state.parents)) {
     if (parentObject.claimedBy == taxPayerId) {
