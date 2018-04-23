@@ -3,7 +3,7 @@
   <table border="1">
     <tbody>
       <tr><td title="僅作識別之用，可隨意輸入">父母/祖父母/外祖父母<img src="../icon/info.png" class="icon"></td><parentforminputtextfield v-for="(parentObject,index) in parents" :key="index" :index="index" :parentObject="parentObject" field="name" /></tr>
-      <tr><td>60歲以上</td><parentformcheckboxfield v-for="(parentObject,index) in parents" :key="index" :index="index" :parentObject="parentObject" field="over65" /></tr>
+      <tr><td>年齡</td><parentformselectfield v-for="(parentObject,index) in parents" :key="index" :index="index" :parentObject="parentObject" field="age" /></tr>
       <tr><td>傷殘</td><parentformcheckboxfield v-for="(parentObject,index) in parents" :key="index" :index="index" :parentObject="parentObject" field="disabledParent" /></tr>
     </tbody>
   </table>
@@ -16,6 +16,7 @@
 import Vuex from 'vuex';
 import parentforminputtextfield from "./parentforminputtextfield";
 import parentformcheckboxfield from "./parentformcheckboxfield";
+import parentformselectfield from "./parentformselectfield";
 
 function addParent(event) {
   this.$store.dispatch('addParent');
@@ -33,7 +34,7 @@ function parentFormFieldUpdate(vueObj, newValue) {
 
 export default {
   name: "parentform",
-  components: {parentforminputtextfield, parentformcheckboxfield},
+  components: {parentforminputtextfield, parentformcheckboxfield, parentformselectfield},
   computed: Vuex.mapState(['parents']),
   methods: {
     addParent,

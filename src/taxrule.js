@@ -96,10 +96,10 @@ class TaxRule {
     otherDeductions: all other deductions
     otherAllowances: all other allowances
     parents: {livingTogether:int, nonLivingTogether:int, livingTogether55:int, nonLivingTogether55:int}
-      livingTogether: number of living together parents age>65
-      nonLivingTogether: number of non-living together parents age>65
-      livingTogether55: number of living together parents age 55-64
-      nonLivingTogether55: number of non-living together parents age 55-64
+      livingTogether: number of living together parents age>60
+      nonLivingTogether: number of non-living together parents age>60
+      livingTogether55: number of living together parents age 55-59
+      nonLivingTogether55: number of non-living together parents age 55-59
     siblings: number of dependent brother or sisters
     disabledDependents: number of disabled dependants
   */
@@ -186,11 +186,7 @@ function taxRebate(tax) {
   otherDeductions2018: all other deductions applicable to 2017/18
   otherAllowances2017: all other allowances applicable to 2017/18
   otherAllowances2018: all other allowances applicable to 2017/18
-  parents: {livingTogether:int, nonLivingTogether:int, livingTogether55:int, nonLivingTogether55:int}
-    livingTogether: number of living together parents age>65
-    nonLivingTogether: number of non-living together parents age>65
-    livingTogether55: number of living together parents age 55-64
-    nonLivingTogether55: number of non-living together parents age 55-64
+  parents: array of {age:int(1-4), livingTogether:boolean}
   siblings: number of dependent brother or sisters
   disabledDependents: number of disabled dependants
   tax2017Provisional: paid 2017 provisional tax
@@ -219,8 +215,56 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
                           132000, 18000, 1,
                           50000, 50000, 25000, 25000,
                           37500, 75000);
-  let tax2017 = taxRule2017.calculateTax(income, mpf, otherDeductions2017, otherAllowances2017, parents, siblings, disabledDependents);
-  let tax2018Provisional = taxRule2018.calculateTax(income, mpf, otherDeductions2018, otherAllowances2018, parents, siblings, disabledDependents);
+  let parentsCount = {
+    livingTogether: 0,
+    nonLivingTogether: 0,
+    livingTogether55: 0,
+    nonLivingTogether55: 0,
+  };
+  let parentsCount2 = {
+    livingTogether: 0,
+    nonLivingTogether: 0,
+    livingTogether55: 0,
+    nonLivingTogether55: 0,
+  };
+  for (let parentObj of parents) {
+    switch (parentObj.age) {
+      case 1:
+        if (parentObj.livingTogether) {
+          parentsCount2.livingTogether55++;
+        } else {
+          parentsCount2.nonLivingTogether55++;
+        }
+        break;
+      case 2:
+        if (parentObj.livingTogether) {
+          parentsCount.livingTogether55++;
+          parentsCount2.livingTogether55++;
+        } else {
+          parentsCount.nonLivingTogether55++;
+          parentsCount2.nonLivingTogether55++;
+        }
+        break;
+      case 3:
+        if (parentObj.livingTogether) {
+          parentsCount2.livingTogether++;
+        } else {
+          parentsCount2.nonLivingTogether++;
+        }
+        break;
+      case 4:
+        if (parentObj.livingTogether) {
+          parentsCount.livingTogether++;
+          parentsCount2.livingTogether++;
+        } else {
+          parentsCount.nonLivingTogether++;
+          parentsCount2.nonLivingTogether++;
+        }
+        break;
+    }
+  }
+  let tax2017 = taxRule2017.calculateTax(income, mpf, otherDeductions2017, otherAllowances2017, parentsCount, siblings, disabledDependents);
+  let tax2018Provisional = taxRule2018.calculateTax(income, mpf, otherDeductions2018, otherAllowances2018, parentsCount2, siblings, disabledDependents);
   let rebate = taxRebate(tax2017.tax);
   let taxPayable = tax2017.tax - tax2017Provisional - rebate + tax2018Provisional.tax;
   return {tax2017, tax2018Provisional, tax2017Provisional, rebate, taxPayable};

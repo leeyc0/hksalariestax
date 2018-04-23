@@ -6,7 +6,7 @@
     <div>
       <div class="taxtable_div">
         <table v-if="taxresult.taxPayable != null" class="taxtable_table">
-          <tr><th colspan="2">2017/18年度</th></tr>
+          <tr><th colspan="2">{{taxYear1}}年度</th></tr>
           <tr><th colspan="2">累進稅率</th></tr>
           <tr><td>總入息</td><td>{{taxresult.tax2017.income}}</td></tr>
           <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.tax2017.mpf}}</td></tr>
@@ -29,16 +29,16 @@
           <tr><td>應課稅入息</td><td>{{taxresult.tax2017.taxableIncomeStdRate}}</td></tr>
           <tr><td>標準稅率稅款計算：全數@{{taxresult.tax2017.stdRate}}%</td><td>{{taxresult.tax2017.stdRateTax}}</td>
           <tr><td colspan="2"></td></tr>
-          <tr><th colspan="2">2017/18年度最終稅款</th>
+          <tr><th colspan="2">{{taxYear1}}年度最終稅款</th>
           <tr><td>適用稅率：{{taxresult.tax2017.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td><td>{{taxresult.tax2017.tax}}</td></tr>
-          <tr><td>減：2017/18年度暫繳稅實額</td><td>{{taxresult.tax2017Provisional}}</td></tr>
+          <tr><td>減：{{taxYear1}}年度暫繳稅實額</td><td>{{taxresult.tax2017Provisional}}</td></tr>
           <tr><td>減：稅務寬減</td><td>{{taxresult.rebate}}</td></tr>
-          <tr><th>2017/18年度最終稅款</th><th>{{taxresult.tax2017.tax - taxresult.tax2017Provisional - taxresult.rebate}}</th></tr>
+          <tr><th>{{taxYear1}}年度最終稅款</th><th>{{taxresult.tax2017.tax - taxresult.tax2017Provisional - taxresult.rebate}}</th></tr>
         </table>
       </div>
       <div class="taxtable_div">
         <table v-if="taxresult.taxPayable != null" class="taxtable_table">
-          <tr><th colspan="2">2018/19年度</th></tr>
+          <tr><th colspan="2">{{taxYear2}}年度</th></tr>
           <tr><th colspan="2">累進稅率</th></tr>
           <tr><td>總入息</td><td>{{taxresult.tax2018Provisional.income}}</td></tr>
           <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.tax2018Provisional.mpf}}</td></tr>
@@ -61,10 +61,10 @@
           <tr><td>應課稅入息</td><td>{{taxresult.tax2018Provisional.taxableIncomeStdRate}}</td></tr>
           <tr><td>標準稅率稅款計算：全數@{{taxresult.tax2018Provisional.stdRate}}%</td><td>{{taxresult.tax2018Provisional.stdRateTax}}</td>
           <tr><td colspan="2"></td></tr>
-          <tr><th colspan="2">2017/18年度暫繳稅</th>
+          <tr><th colspan="2">{{taxYear2}}年度暫繳稅</th>
           <tr><td>適用稅率：{{taxresult.tax2018Provisional.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td><td>{{taxresult.tax2018Provisional.tax}}</td></tr>
           <tr v-for="i in 2" :key="'dummy'+i"><td>&nbsp;</td><td>&nbsp;</td></tr>
-          <tr><th>2018/19年度暫繳稅</th><th>{{taxresult.tax2018Provisional.tax}}</th></tr>
+          <tr><th>{{taxYear2}}年度暫繳稅</th><th>{{taxresult.tax2018Provisional.tax}}</th></tr>
         </table>
       </div>
     </div>
@@ -75,6 +75,7 @@
 <script>
 "use strict";
 import Vue from 'vue';
+import Vuex from 'vuex';
 import VModal from 'vue-js-modal';
 /* eslint no-unused-vars: "off" */
 Vue.use(VModal);
@@ -83,6 +84,7 @@ export default {
   name: 'taxpayable',
   props: ['taxresult', 'index'],
   computed: {
+    ...Vuex.mapState(['taxYear1', 'taxYear2']),
     taxpayable: function() {return this.taxresult.taxPayable;},
     breakdown: function() {return JSON.stringify(this.taxresult, null, 2);},
     taxpayableModalName: function() {return "taxpayableModal"+this.index;},

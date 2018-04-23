@@ -181,7 +181,71 @@ describe("taxRebate", function() {
   });
 });
 
+describe("taxPayable parent allowance", function() {
+  let parents = [
+    {age: 1, livingTogether: false},
+    {age: 1, livingTogether: true},
+    {age: 2, livingTogether: false},
+    {age: 2, livingTogether: true},
+    {age: 3, livingTogether: false},
+    {age: 3, livingTogether: true},
+    {age: 4, livingTogether: false},
+    {age: 4, livingTogether: true},
+  ];
+  let expectedResult = {
+    tax2017: {
+      income: 0,
+      taxableIncome: 0,
+      taxableIncomeStdRate: 0,
+      mpf: 0,
+      otherDeductions: 0,
+      basicAllowance: 132000,
+      otherAllowances: 0,
+      parentAllowance: 207000,
+      siblingAllowance: 0,
+      disabledDependentAllowance: 0,
+      progressiveTaxBreakdown: [{"step":0,"rate":2,"tax":0}],
+      progressiveTax: 0,
+      stdRateTax: 0,
+      stdRate: 15,
+      rate: 'progressiveTax',
+      tax: 0
+    },
+    tax2018Provisional: {
+      income: 0,
+      taxableIncome: 0,
+      taxableIncomeStdRate: 0,
+      mpf: 0,
+      otherDeductions: 0,
+      basicAllowance: 132000,
+      otherAllowances: 0,
+      parentAllowance: 450000,
+      siblingAllowance: 0,
+      disabledDependentAllowance: 0,
+      progressiveTaxBreakdown: [{"step":0,"rate":2,"tax":0}],
+      progressiveTax: 0,
+      stdRateTax: 0,
+      stdRate: 15,
+      rate: 'progressiveTax',
+      tax: 0
+    },
+    tax2017Provisional: 0,
+    rebate: 0,
+    taxPayable: 0
+  };
+  it("test parent allowance", function() {
+    let actualResult = taxPayable(0,0,0,0,0,0,parents,0,0,0);
+    assert.deepStrictEqual(actualResult, expectedResult);
+  });
+});
+
 describe("taxPayable both year", function() {
+  let parents = [
+    {age: 2, livingTogether: false},
+    {age: 2, livingTogether: true},
+    {age: 4, livingTogether: false},
+    {age: 4, livingTogether: true},
+  ];
   it("progressive rate both year", function() {
     let expectedResult = {
       tax2017: {

@@ -13,6 +13,8 @@ const initialState = {
   taxresults: {},
   totalSiblings: 0,
   totalDisabledSiblings: 0,
+  taxYear1: "2017/18",
+  taxYear2: "2018/19",
 };
 initialState.taxpayers[initialState.taxpayerId] = new obj.TaxPayer("納稅人1", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 initialState.taxresults[initialState.taxpayerId] = {taxPayable: null};
@@ -45,7 +47,7 @@ function taxPayerFormTextFieldUpdate(state, args) {
 
 function addParent(state) {
   let livingTogether = {};
-  Vue.set(state.parents, state.parentId, new obj.Parent("父母"+state.parentId, false, false, livingTogether, store.getters.firsttaxpayerId));
+  Vue.set(state.parents, state.parentId, new obj.Parent("父母"+state.parentId, 1, false, livingTogether, store.getters.firsttaxpayerId));
   for (let id of Object.keys(state.taxpayers)) {
     livingTogether[id] = false;
   }
@@ -77,28 +79,14 @@ function computeTaxPerTaxPayer(state, taxPayerId) {
   let otherDeductionsNextYear = state.taxpayers[taxPayerId].otherDeductionsNextYear;
   let otherAllowancesThisYear = state.taxpayers[taxPayerId].otherAllowancesThisYear;
   let otherAllowancesNextYear = state.taxpayers[taxPayerId].otherAllowancesNextYear;
-  let parents = {livingTogether: 0, nonLivingTogether: 0, livingTogether55: 0, nonLivingTogether55: 0};
+  let parents = [];
   let siblings = state.taxpayers[taxPayerId].siblings;
   let disabledDependents = state.taxpayers[taxPayerId].disabledSiblings + state.taxpayers[taxPayerId].otherDisabledDependants;
   let provisionalTax = state.taxpayers[taxPayerId].provisionalTax;
   for (let parentObject of Object.values(state.parents)) {
     if (parentObject.claimedBy == taxPayerId) {
-      if (parentObject.disabledParent) {
-        disabledDependents++;
-      }
-      if (parentObject.over65) {
-        if (parentObject.livingTogether[taxPayerId]) {
-          parents.livingTogether++;
-        } else {
-          parents.nonLivingTogether++;
-        }
-      } else {
-        if (parentObject.livingTogether[taxPayerId]) {
-          parents.livingTogether55++;
-        } else {
-          parents.nonLivingTogether55++;
-        }
-      }
+      parentObject = Object.assign({}, parentObject, {livingTogether: parentObject.livingTogether[taxPayerId]});
+      parents.push(parentObject);
     }
   }
   let taxResult = taxrule.taxPayable(income, mpf, otherDeductionsThisYear, otherDeductionsNextYear,

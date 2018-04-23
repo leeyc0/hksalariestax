@@ -31,14 +31,18 @@ function TaxPayer(name, income, mpf, otherDeductionsThisYear, otherDeductionsNex
 
 /*
   name: name
-  over65: age over 65(boolean)
+  age: one of the following values:
+       1 = reach 55 in next year
+       2 = reach 55 in prev year
+       3 = reach 65 in next year
+       4 = reach 65 in prev year
   disabledParent: eligible for disabled dependent allowance(boolean)
   livingTogether: Object of {taxpayerid: livingTogether(boolean), ...}
   claimedBy: claimed by taxpayerid
 */
-function Parent(name, over65, disabledParent, livingTogether, claimedBy) {
+function Parent(name, age, disabledParent, livingTogether, claimedBy) {
   this.name = name;
-  this.over65 = over65;
+  this.age = age;
   this.disabledParent = disabledParent;
   this.livingTogether = livingTogether;
   this.claimedBy = claimedBy;
