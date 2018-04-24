@@ -251,8 +251,10 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
         break;
       case 3:
         if (parentObj.livingTogether) {
+          parentsCount.livingTogether55++;
           parentsCount2.livingTogether++;
         } else {
+          parentsCount.nonLivingTogether55++;
           parentsCount2.nonLivingTogether++;
         }
         break;

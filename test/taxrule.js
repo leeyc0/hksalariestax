@@ -206,7 +206,7 @@ describe("taxPayable test allowance", function() {
       otherDeductions: 0,
       basicAllowance: 132000,
       otherAllowances: 0,
-      parentAllowance: 345000,
+      parentAllowance: 414000,
       siblingAllowance: 0,
       disabledDependentAllowance: 150000,
       progressiveTaxBreakdown: [{"step":0,"rate":2,"tax":0}],
