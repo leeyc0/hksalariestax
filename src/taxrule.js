@@ -186,14 +186,15 @@ function taxRebate(tax) {
   otherDeductions2018: all other deductions applicable to 2017/18
   otherAllowances2017: all other allowances applicable to 2017/18
   otherAllowances2018: all other allowances applicable to 2017/18
-  parents: array of {age:int(1-4), livingTogether:boolean}
+  parents: array of {age:int(1-4), livingTogether:boolean, disabledParent:boolean}
   siblings: number of dependent brother or sisters
-  disabledDependents: number of disabled dependants
+  disabledSiblings: number of disabled brother or sisters
+  otherDisabledDependants: other disabled dependants
   tax2017Provisional: paid 2017 provisional tax
 */
 function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
                     otherAllowances2017, otherAllowances2018, parents, siblings,
-                    disabledDependents, tax2017Provisional) {
+                    disabledSiblings, otherDisabledDependants, tax2017Provisional) {
   let progressiveRate2017 = [
     {step: 45000, rate: 2},
     {step: 45000, rate: 7},
@@ -215,6 +216,9 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
                           132000, 18000, 1,
                           50000, 50000, 25000, 25000,
                           37500, 75000);
+  let totalSiblings1 = siblings + disabledSiblings;
+  let totalSiblings2 = siblings + disabledSiblings;
+  let disabledDependents = disabledSiblings + otherDisabledDependants;
   let parentsCount = {
     livingTogether: 0,
     nonLivingTogether: 0,
@@ -252,6 +256,11 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
           parentsCount2.nonLivingTogether++;
         }
         break;
+      case 0:
+        disabledDependents++;
+        /* eslint no-fallthrough: "off" */
+        // missing break statement is intended - case 0 need to execute case 4 too
+        // all disabled parents are entitled to full allowance
       case 4:
         if (parentObj.livingTogether) {
           parentsCount.livingTogether++;
@@ -263,8 +272,8 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
         break;
     }
   }
-  let tax2017 = taxRule2017.calculateTax(income, mpf, otherDeductions2017, otherAllowances2017, parentsCount, siblings, disabledDependents);
-  let tax2018Provisional = taxRule2018.calculateTax(income, mpf, otherDeductions2018, otherAllowances2018, parentsCount2, siblings, disabledDependents);
+  let tax2017 = taxRule2017.calculateTax(income, mpf, otherDeductions2017, otherAllowances2017, parentsCount, totalSiblings1, disabledDependents);
+  let tax2018Provisional = taxRule2018.calculateTax(income, mpf, otherDeductions2018, otherAllowances2018, parentsCount2, totalSiblings2, disabledDependents);
   let rebate = taxRebate(tax2017.tax);
   let taxPayable = tax2017.tax - tax2017Provisional - rebate + tax2018Provisional.tax;
   return {tax2017, tax2018Provisional, tax2017Provisional, rebate, taxPayable};

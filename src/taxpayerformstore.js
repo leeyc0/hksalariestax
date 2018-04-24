@@ -81,7 +81,8 @@ function computeTaxPerTaxPayer(state, taxPayerId) {
   let otherAllowancesNextYear = state.taxpayers[taxPayerId].otherAllowancesNextYear;
   let parents = [];
   let siblings = state.taxpayers[taxPayerId].siblings;
-  let disabledDependents = state.taxpayers[taxPayerId].disabledSiblings + state.taxpayers[taxPayerId].otherDisabledDependants;
+  let disabledSiblings = state.taxpayers[taxPayerId].disabledSiblings;
+  let otherDisabledDependants = state.taxpayers[taxPayerId].otherDisabledDependants;
   let provisionalTax = state.taxpayers[taxPayerId].provisionalTax;
   for (let parentObject of Object.values(state.parents)) {
     if (parentObject.claimedBy == taxPayerId) {
@@ -91,7 +92,8 @@ function computeTaxPerTaxPayer(state, taxPayerId) {
   }
   let taxResult = taxrule.taxPayable(income, mpf, otherDeductionsThisYear, otherDeductionsNextYear,
                                      otherAllowancesThisYear, otherAllowancesNextYear,
-                                     parents, siblings, disabledDependents, provisionalTax);
+                                     parents, siblings, disabledSiblings, otherDisabledDependants,
+                                     provisionalTax);
   return taxResult;
 }
 
