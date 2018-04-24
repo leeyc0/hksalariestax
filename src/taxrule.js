@@ -186,14 +186,15 @@ function taxRebate(tax) {
   otherDeductions2018: all other deductions applicable to 2017/18
   otherAllowances2017: all other allowances applicable to 2017/18
   otherAllowances2018: all other allowances applicable to 2017/18
-  parents: array of {age:int(1-4), livingTogether:boolean, disabledParent:boolean}
+  parents: array of {age:int(0-4), livingTogether:boolean}, see objects.js function Parent for attr definition
   siblings: number of dependent brother or sisters
+  siblings18: number of dependent brother or sisters illegible in next year
   disabledSiblings: number of disabled brother or sisters
   otherDisabledDependants: other disabled dependants
   tax2017Provisional: paid 2017 provisional tax
 */
 function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
-                    otherAllowances2017, otherAllowances2018, parents, siblings,
+                    otherAllowances2017, otherAllowances2018, parents, siblings, siblings18,
                     disabledSiblings, otherDisabledDependants, tax2017Provisional) {
   let progressiveRate2017 = [
     {step: 45000, rate: 2},
@@ -216,7 +217,7 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
                           132000, 18000, 1,
                           50000, 50000, 25000, 25000,
                           37500, 75000);
-  let totalSiblings1 = siblings + disabledSiblings;
+  let totalSiblings1 = siblings + disabledSiblings + siblings18;
   let totalSiblings2 = siblings + disabledSiblings;
   let disabledDependents = disabledSiblings + otherDisabledDependants;
   let parentsCount = {
@@ -233,6 +234,7 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
   };
   for (let parentObj of parents) {
     switch (parentObj.age) {
+      // 55 in next year
       case 1:
         if (parentObj.livingTogether) {
           parentsCount2.livingTogether55++;
@@ -240,6 +242,7 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
           parentsCount2.nonLivingTogether55++;
         }
         break;
+      // reached 55
       case 2:
         if (parentObj.livingTogether) {
           parentsCount.livingTogether55++;
@@ -249,6 +252,7 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
           parentsCount2.nonLivingTogether55++;
         }
         break;
+      // 60 in next year
       case 3:
         if (parentObj.livingTogether) {
           parentsCount.livingTogether55++;
@@ -258,11 +262,13 @@ function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
           parentsCount2.nonLivingTogether++;
         }
         break;
+      // disabled parent
       case 0:
         disabledDependents++;
         /* eslint no-fallthrough: "off" */
-        // missing break statement is intended - case 0 need to execute case 4 too
-        // all disabled parents are entitled to full allowance
+        // intentional missed break statement
+        // because all disabled parents are entitled to full allowance no matter what age
+      // reached 60 or disabled parent
       case 4:
         if (parentObj.livingTogether) {
           parentsCount.livingTogether++;

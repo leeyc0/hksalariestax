@@ -9,12 +9,13 @@
   otherAllowancesThisYear: all other allowances applicable to this year
   otherAllowancesNextYear: all other allowances appliable to this year
   siblings: number of dependent brother or sisters
+  siblings18: number of dependent brother or sisters illegible in next year
   disabledSiblings: number of disabled siblings
   otherDisabledDependants: number of disabled dependants (not siblings nor parents)
   provisionalTax: paid provisional tax
 */
 function TaxPayer(name, income, mpf, otherDeductionsThisYear, otherDeductionsNextYear,
-                  otherAllowancesThisYear, otherAllowancesNextYear, siblings,
+                  otherAllowancesThisYear, otherAllowancesNextYear, siblings, siblings18,
                   disabledSiblings, otherDisabledDependants, provisionalTax) {
   this.name = name;
   this.income = income;
@@ -24,6 +25,7 @@ function TaxPayer(name, income, mpf, otherDeductionsThisYear, otherDeductionsNex
   this.otherAllowancesThisYear = otherAllowancesThisYear;
   this.otherAllowancesNextYear = otherAllowancesNextYear;
   this.siblings = siblings;
+  this.siblings18 = siblings18;
   this.disabledSiblings = disabledSiblings;
   this.otherDisabledDependants = otherDisabledDependants;
   this.provisionalTax = provisionalTax;

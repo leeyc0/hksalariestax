@@ -12,16 +12,17 @@ const initialState = {
   parentId: 1,
   taxresults: {},
   totalSiblings: 0,
+  totalSiblings18: 0,
   totalDisabledSiblings: 0,
   taxYear1: "2017/18",
   taxYear2: "2018/19",
 };
-initialState.taxpayers[initialState.taxpayerId] = new obj.TaxPayer("納稅人1", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+initialState.taxpayers[initialState.taxpayerId] = new obj.TaxPayer("納稅人1", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 initialState.taxresults[initialState.taxpayerId] = {taxPayable: null};
 initialState.taxpayerId++;
 
 function addTaxPayer(state) {
-  Vue.set(state.taxpayers, state.taxpayerId, new obj.TaxPayer("納稅人"+state.taxpayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+  Vue.set(state.taxpayers, state.taxpayerId, new obj.TaxPayer("納稅人"+state.taxpayerId, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
   Vue.set(state.taxresults, state.taxpayerId, {taxPayable: null});
   for (let id of Object.keys(state.parents)) {
     Vue.set(state.parents[id].livingTogether, state.taxpayerId, false);
@@ -81,6 +82,7 @@ function computeTaxPerTaxPayer(state, taxPayerId) {
   let otherAllowancesNextYear = state.taxpayers[taxPayerId].otherAllowancesNextYear;
   let parents = [];
   let siblings = state.taxpayers[taxPayerId].siblings;
+  let siblings18 = state.taxpayers[taxPayerId].siblings18;
   let disabledSiblings = state.taxpayers[taxPayerId].disabledSiblings;
   let otherDisabledDependants = state.taxpayers[taxPayerId].otherDisabledDependants;
   let provisionalTax = state.taxpayers[taxPayerId].provisionalTax;
@@ -92,8 +94,8 @@ function computeTaxPerTaxPayer(state, taxPayerId) {
   }
   let taxResult = taxrule.taxPayable(income, mpf, otherDeductionsThisYear, otherDeductionsNextYear,
                                      otherAllowancesThisYear, otherAllowancesNextYear,
-                                     parents, siblings, disabledSiblings, otherDisabledDependants,
-                                     provisionalTax);
+                                     parents, siblings, siblings18, disabledSiblings,
+                                     otherDisabledDependants, provisionalTax);
   return taxResult;
 }
 
@@ -106,6 +108,10 @@ function computeTax(state) {
 
 function updateTotalSiblings(state, totalSiblings) {
   Vue.set(state, "totalSiblings", totalSiblings);
+}
+
+function updateTotalSiblings18(state, totalSiblings18) {
+  Vue.set(state, "totalSiblings18", totalSiblings18);
 }
 
 function updateTotalDisabledSiblings(state, totalDisabledSiblings) {
@@ -125,6 +131,7 @@ let store = new Vuex.Store({
     updateTaxPayerParentLivingTogether,
     computeTax,
     updateTotalSiblings,
+    updateTotalSiblings18,
     updateTotalDisabledSiblings,
   },
   actions: {
@@ -138,6 +145,7 @@ let store = new Vuex.Store({
     updateTaxPayerParentLivingTogether: ({getters, state}, args) => store.commit('updateTaxPayerParentLivingTogether', args),
     computeTax: () => store.commit("computeTax"),
     updateTotalSiblings: ({getters, state}, totalSiblings) => store.commit("updateTotalSiblings", totalSiblings),
+    updateTotalSiblings18: ({getters, state}, totalSiblings18) => store.commit("updateTotalSiblings18", totalSiblings18),
     updateTotalDisabledSiblings: ({getters, state}, totalDisabledSiblings) => store.commit("updateTotalDisabledSiblings", totalDisabledSiblings),
   },
   getters: {

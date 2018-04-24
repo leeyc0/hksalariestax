@@ -4,6 +4,7 @@
     <legend>自動分配免稅額專用選項</legend>
     <table>
       <tr><td>受供養健全兄弟姊妹總數</td><td><input type="number" v-model.number="totalSiblings" /></td></tr>
+      <tr><td>受供養健全兄弟姊妹總數<br>（{{taxYear2}}年度失去資格）</td><td><input type="number" v-model.number="totalSiblings18" /></td></tr>
       <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" v-model.number="totalDisabledSiblings" /></td></tr>
     </table>
   </fieldset>
@@ -19,6 +20,7 @@
       <tr><td title="請參閱上年稅單暫繳稅項目">{{taxYear1}}年度暫繳稅實額<img src="../icon/info.png" class="icon"></td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="provisionalTax" /></tr>
       <tr><td>受供養父母/祖父母/外祖父母</td><taxpayerformparentstd v-for="(taxpayer,index) in taxpayers" :key=index :taxpayerindex=index :taxpayer="taxpayer" :parents="parents" /></tr>
       <tr><td>受供養健全兄弟姊妹數目</td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="siblings" /></tr>
+      <tr><td>受供養健全兄弟姊妹數目<br>（{{taxYear2}}年度失去資格）</td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="siblings18" /></tr>
       <tr><td>受供養傷殘兄弟姊妹數目</td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="disabledSiblings" /></tr>
       <tr><td>受供養傷殘配偶及子女數目</td><taxpayerforminputtextfield v-for="(taxpayer,index) in taxpayers" :key=index :index=index :taxpayer="taxpayer" field="otherDisabledDependants" /></tr>
       <tr><td title="負數為應退還稅款">應繳/退還稅款<img src="../icon/info.png" class="icon"></td><taxpayable v-for="(taxresult,index) in taxresults" :key=index :index=index :taxresult="taxresult" /></tr>
@@ -60,6 +62,10 @@ export default {
     totalSiblings: {
       get() {return this.$store.state.totalSiblings;},
       set(value) {this.$store.dispatch('updateTotalSiblings', value);},
+    },
+    totalSiblings18: {
+      get() {return this.$store.state.totalSiblings18;},
+      set(value) {this.$store.dispatch('updateTotalSiblings18', value);},
     },
     totalDisabledSiblings: {
       get() {return this.$store.state.totalDisabledSiblings;},

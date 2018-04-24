@@ -182,6 +182,7 @@ describe("taxRebate", function() {
 });
 
 let abledSiblings = 1;
+let abledSiblings18 = 0;
 let disabledSiblings = 1;
 let otherDisabledDependants = 1;
 describe("taxPayable test allowance", function() {
@@ -239,7 +240,17 @@ describe("taxPayable test allowance", function() {
     taxPayable: 0
   };
   it("test parent allowance", function() {
-    let actualResult = taxPayable(0,0,0,0,0,0,parents,0,0,0,0);
+    let actualResult = taxPayable(0,0,0,0,0,0,parents,0,0,0,0,0);
+    assert.deepStrictEqual(actualResult, expectedResult);
+  });
+  it("test sibling allowance", function() {
+    expectedResult.tax2017.parentAllowance = 0;
+    expectedResult.tax2018Provisional.parentAllowance = 0;
+    expectedResult.tax2017.siblingAllowance = 112500;
+    expectedResult.tax2018Provisional.siblingAllowance = 75000;
+    expectedResult.tax2017.disabledDependentAllowance = 75000;
+    expectedResult.tax2018Provisional.disabledDependentAllowance = 75000;
+    let actualResult = taxPayable(0,0,0,0,0,0,[],1,1,1,0,0);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
 });
@@ -293,7 +304,7 @@ describe("taxPayable both year", function() {
       rebate: 19073,
       taxPayable: 22027
     };
-    let actualResult = taxPayable(824000,1000,20000,25000,10000,15000,parents,abledSiblings,disabledSiblings,otherDisabledDependants,500);
+    let actualResult = taxPayable(824000,1000,20000,25000,10000,15000,parents,abledSiblings,abledSiblings18,disabledSiblings,otherDisabledDependants,500);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
   it("standard rate 2017 progressive rate 2018", function() {
@@ -338,7 +349,7 @@ describe("taxPayable both year", function() {
       rebate: 30000,
       taxPayable: 1640840
     };
-    let actualResult = taxPayable(5620000,1000,20000,25000,10000,15000,parents,abledSiblings,disabledSiblings,otherDisabledDependants,500);
+    let actualResult = taxPayable(5620000,1000,20000,25000,10000,15000,parents,abledSiblings,abledSiblings18,disabledSiblings,otherDisabledDependants,500);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
   it("standard rate both year", function() {
@@ -383,7 +394,7 @@ describe("taxPayable both year", function() {
       rebate: 30000,
       taxPayable: 1792450
     };
-    let actualResult = taxPayable(6100000,1000,20000,25000,10000,15000,parents,abledSiblings,disabledSiblings,otherDisabledDependants,500)
+    let actualResult = taxPayable(6100000,1000,20000,25000,10000,15000,parents,abledSiblings,abledSiblings18,disabledSiblings,otherDisabledDependants,500)
     assert.deepStrictEqual(actualResult, expectedResult);
   });
 });
