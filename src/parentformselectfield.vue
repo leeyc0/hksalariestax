@@ -3,10 +3,10 @@
 <select v-model="value">
   <option :value="0">傷殘——不限年齡</option>
   <optgroup label="以下選項均非傷殘人士"/>
-  <option :value="1">於{{taxYear2}}年度已滿55歲</option>
-  <option :value="2">於{{taxYear1}}年度已滿55歲</option>
-  <option :value="3">於{{taxYear2}}年度已滿60歲</option>
-  <option :value="4">於{{taxYear1}}年度已滿60歲</option>
+  <option :value="1">於{{taxYear2}}年度滿55歲</option>
+  <option :value="2">於{{taxYear1}}年度滿55歲</option>
+  <option :value="3">於{{taxYear2}}年度滿60歲</option>
+  <option :value="4">於{{taxYear1}}年度滿60歲</option>
 </select>
 </td>
 </template>
