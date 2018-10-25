@@ -23,15 +23,23 @@ class TaxRule {
     parentAdditionalAllowance55: Dependent Parent and Dependent Grandparent Additional Allowance (55-64)
     siblingAllowance:            Dependent Brother or Dependent Sister Allowance
     disabledDependentAllowance:  Disabled dependant allowance
+    childAllowance:              Child Allowance
+    newbornChildExtraAllowance:  Newborn Child Extra Allowance
+    provisionalYear:             Provision tax year
   */
-  constructor(progressiveRate, stdRate,
-              basicAllowance, mpfMax, mpfMaxMultiplier,
+  constructor({progressiveRate, stdRate,
+              basicAllowance, marriedAllowance,
+              mpfMax, mpfMaxMultiplier,
               parentAllowance, parentAdditionalAllowance,
               parentAllowance55, parentAdditionalAllowance55,
-              siblingAllowance, disabledDependentAllowance) {
+              siblingAllowance, disabledDependentAllowance,
+              childAllowance, newbornChildAdditionalAllowance,
+              singleParentAllowance, personalDisabilityAllowance,
+              provisionalYear}) {
     this.progressiveRate = progressiveRate;
     this.stdRate = stdRate;
     this.basicAllowance = basicAllowance;
+    this.marriedAllowance = marriedAllowance;
     this.mpfMax = mpfMax;
     this.mpfMaxMultiplier = mpfMaxMultiplier;
     this.parentAllowance = parentAllowance;
@@ -40,15 +48,20 @@ class TaxRule {
     this.parentAdditionalAllowance55 = parentAdditionalAllowance55;
     this.siblingAllowance = siblingAllowance;
     this.disabledDependentAllowance = disabledDependentAllowance;
+    this.childAllowance = childAllowance;
+    this.newbornChildAdditionalAllowance = newbornChildAdditionalAllowance;
+    this.singleParentAllowance = singleParentAllowance;
+    this.personalDisabilityAllowance = personalDisabilityAllowance;
+    this.provisionalYear = provisionalYear;
   }
 
   /*
     Calculates MPF deduction
-    mpf:     user-input MPF
+    taxpayer: TaxPayer object
     returns: calculated MPF deduction
   */
-  calculateMpfDeduction(mpf) {
-    let mpfDeduction = Math.floor(mpf * this.mpfMaxMultiplier);
+  calculateMpfDeduction(taxpayer) {
+    let mpfDeduction = Math.floor(taxpayer.mpf * this.mpfMaxMultiplier);
     if (mpfDeduction > this.mpfMax) {
       mpfDeduction = this.mpfMax;
     }
@@ -62,56 +75,176 @@ class TaxRule {
   */
   calculateParentAllowance(parents) {
     let totalParentAllowance = 0;
-    totalParentAllowance += (parents.livingTogether + parents.nonLivingTogether) * this.parentAllowance;
-    totalParentAllowance += parents.livingTogether * this.parentAdditionalAllowance;
-    totalParentAllowance += (parents.livingTogether55 + parents.nonLivingTogether55) * this.parentAllowance55;
-    totalParentAllowance += parents.livingTogether55 * this.parentAdditionalAllowance55;
+    let parentCount = {
+      livingTogether: 0,
+      nonLivingTogether: 0,
+      livingTogether55: 0,
+      nonLivingTogether55: 0,
+    }
+    
+    // count total parents, need to distinglish between two tax years
+    if (this.provisionalYear) {
+      parents.reduce(
+        function (parentCountAccu, parentObj) {
+          switch (parentObj.age) {
+            case 0:
+            case 3:
+            case 4:
+              if (parentObj.livingTogether) {
+                parentCountAccu.livingTogether++;
+              } else {
+                parentCountAccu.nonLivingTogether++;
+              }
+              break;
+            case 1:
+            case 2:
+              if (parentObj.livingTogether) {
+                parentCountAccu.livingTogether55++;
+              } else {
+                parentCountAccu.nonLivingTogether55++;
+              }
+              break;
+          }
+          return parentCountAccu;
+        }
+        ,parentCount);
+    } else {
+      parents.reduce(
+        function (parentCountAccu, parentObj) {
+          switch (parentObj.age) {
+            case 0:
+            case 4:
+              if (parentObj.livingTogether) {
+                parentCountAccu.livingTogether++;
+              } else {
+                parentCountAccu.nonLivingTogether++;
+              }
+              break;
+            case 2:
+            case 3:
+              if (parentObj.livingTogether) {
+                parentCountAccu.livingTogether55++;
+              } else {
+                parentCountAccu.nonLivingTogether55++;
+              }
+              break;
+          }
+          return parentCountAccu;
+        }
+        ,parentCount);
+    }
+    totalParentAllowance += (parentCount.livingTogether + parentCount.nonLivingTogether) * this.parentAllowance;
+    totalParentAllowance += parentCount.livingTogether * this.parentAdditionalAllowance;
+    totalParentAllowance += (parentCount.livingTogether55 + parentCount.nonLivingTogether55) * this.parentAllowance55;
+    totalParentAllowance += parentCount.livingTogether55 * this.parentAdditionalAllowance55;
     return totalParentAllowance;
   }
 
   /*
     Calculates Dependent Brother or Dependent Sister Allowance
-    siblings: number of dependent brother or sisters
+    taxpayer: TaxPayer object
     returns: calculated Dependent Brother or Dependent Sister Allowance
   */
-  calculateSiblingAllowance(siblings) {
-    let totalSiblingAllowance = this.siblingAllowance * siblings;
-    return totalSiblingAllowance;
+  calculateSiblingAllowance(taxpayer) {
+    let siblings = 0;
+    if (this.provisionalYear) {
+      siblings = taxpayer.siblings + taxpayer.disabledSiblings;
+    } else {
+      siblings = taxpayer.siblings + taxpayer.disabledSiblings + taxpayer.siblings18;
+    }
+    return this.siblingAllowance * siblings;
   }
 
   /*
     Calculates Disabled Dependant Allowance
-    disabledDependents: number of disabled dependants
+    taxpayer: TaxPayer object
+    parents: (see calculateTax)
     returns: calculated Disabled dependant allowance
   */
-  calculateDisabledDependentAllowance(disabledDependents) {
-    let totaldisabledDependentAllowance = this.disabledDependentAllowance * disabledDependents;
-    return totaldisabledDependentAllowance;
+  calculateDisabledDependentAllowance(taxpayer, parents) {
+    let disabledDependents = taxpayer.disabledSiblings + taxpayer.otherDisabledDependants;
+    disabledDependents += parents.reduce(
+      function(count, parentObj) {
+        if (parentObj.age === 0) {
+          count++;
+          return count;
+        } else {
+          return count;
+        }
+      },
+    0);
+    return this.disabledDependentAllowance * disabledDependents;
+  }
+  
+  /*
+    Calculates Child Allowance and Single Parent Allowance
+    taxpayer: TaxPayer object
+    returns: calculated Child allowance and Single Parent Allowance
+  */
+  calculateChildAllowanceAndSingleParentAllowance(taxpayer) {
+    let children = 0;
+    let newbornChildren = 0;
+    if (this.provisionalYear) {
+      /* newbornChildrenNextYear:
+         children born from the start of provisionalYear until the time of tax reporting */
+      children = taxpayer.children + taxpayer.newbornChildrenNextYear;
+      newbornChildren = taxpayer.newbornChildrenNextYear;
+    } else {
+      children = taxpayer.children + taxpayer.children18 + taxpayer.newbornChildrenThisYear;
+      newbornChildren = taxpayer.newbornChildrenThisYear;
+    }
+    
+    // tax rule states that maximum of 9 children can be claimed
+    if (newbornChildren > 9) {
+      newbornChildren = 9;
+    }
+    if (children > 9) {
+      children = 9;
+    }
+    
+    let childAllowance = this.childAllowance * children + 
+                         this.newbornChildAdditionalAllowance * newbornChildren;
+    
+    let singleParentAllowance = 0;
+    
+    if (childAllowance > 0) {
+      if (this.provisionalYear) {
+        if (taxpayer.martialStatus === 2 || taxpayer.martialStatus === 3) {
+          singleParentAllowance = this.singleParentAllowance;
+        }
+      } else {
+        if (taxpayer.martialStatus === 3) {
+          singleParentAllowance = this.singleParentAllowance;
+        }
+      }
+    }
+    
+    return {childAllowance, singleParentAllowance};
   }
 
   /*
     Calculate tax - the only public interface
-    income: income
-    mpf: MPF paid by employee
-    otherDeductions: all other deductions
-    otherAllowances: all other allowances
-    parents: {livingTogether:int, nonLivingTogether:int, livingTogether55:int, nonLivingTogether55:int}
-      livingTogether: number of living together parents age>60
-      nonLivingTogether: number of non-living together parents age>60
-      livingTogether55: number of living together parents age 55-59
-      nonLivingTogether55: number of non-living together parents age 55-59
-    siblings: number of dependent brother or sisters
-    disabledDependents: number of disabled dependants
+    taxpayer: TaxPayer object
+    parents: see taxPayable
   */
-  calculateTax(income, mpf, otherDeductions, otherAllowances, parents, siblings, disabledDependents) {
+  calculateTax(taxpayer, parents) {
+    let otherDeductions = this.provisionalYear ? taxpayer.otherDeductionsNextYear :
+                                                 taxpayer.otherDeductionsThisYear;
+    
     // progressive rate: calculate taxable income
-    let mpfFinal = this.calculateMpfDeduction(mpf);
+    let mpfFinal = this.calculateMpfDeduction(taxpayer);
+    let basicAllowance = taxpayer.martialStatus !== 1 ? this.basicAllowance : 0;
+    let marriedAllowance = taxpayer.martialStatus === 1 ? this.marriedAllowance : 0;
+    let personalDisabilityAllowance = taxpayer.disabledPerson ? this.personalDisabilityAllowance : 0;
     let parentAllowance = this.calculateParentAllowance(parents);
-    let siblingAllowance = this.calculateSiblingAllowance(siblings);
-    let disabledDependentAllowance = this.calculateDisabledDependentAllowance(disabledDependents);
-    let taxableIncome = income - mpfFinal - this.basicAllowance - otherDeductions - otherAllowances -
-                    parentAllowance - siblingAllowance - disabledDependentAllowance;
-    let taxableIncomeStdRate = income - mpfFinal - otherDeductions;
+    let siblingAllowance = this.calculateSiblingAllowance(taxpayer);
+    let {childAllowance, singleParentAllowance} = this.calculateChildAllowanceAndSingleParentAllowance(taxpayer);
+    let disabledDependentAllowance = this.calculateDisabledDependentAllowance(taxpayer, parents);
+    let taxableIncome = taxpayer.income - mpfFinal - otherDeductions - 
+                        basicAllowance - marriedAllowance - personalDisabilityAllowance - 
+                        parentAllowance - siblingAllowance - disabledDependentAllowance -
+                        childAllowance - singleParentAllowance;
+    let taxableIncomeStdRate = taxpayer.income - mpfFinal - otherDeductions;
     if (taxableIncome < 0) {
       taxableIncome = 0;
     }
@@ -142,15 +275,18 @@ class TaxRule {
     let stdRateTax = Math.floor(taxableIncomeStdRate * this.stdRate / 100);
 
     let taxResult = {
-      income,
+      income: taxpayer.income,
       taxableIncome,
       taxableIncomeStdRate,
       mpf: mpfFinal,
-      basicAllowance: this.basicAllowance,
+      basicAllowance,
+      marriedAllowance,
+      personalDisabilityAllowance,
       otherDeductions,
-      otherAllowances,
       parentAllowance,
       siblingAllowance,
+      childAllowance,
+      singleParentAllowance,
       disabledDependentAllowance,
       progressiveTaxBreakdown,
       progressiveTax,
@@ -180,112 +316,68 @@ function taxRebate(tax) {
 }
 
 /*
+  taxpayer: TaxPayer object
   income: income
-  mpf: MPF paid by employee
-  otherDeductions2017: all other deductions applicable to 2017/18
-  otherDeductions2018: all other deductions applicable to 2017/18
-  otherAllowances2017: all other allowances applicable to 2017/18
-  otherAllowances2018: all other allowances applicable to 2017/18
   parents: array of {age:int(0-4), livingTogether:boolean}, see objects.js function Parent for attr definition
-  siblings: number of dependent brother or sisters
-  siblings18: number of dependent brother or sisters illegible in next year
-  disabledSiblings: number of disabled brother or sisters
-  otherDisabledDependants: other disabled dependants
-  tax2017Provisional: paid 2017 provisional tax
 */
-function taxPayable(income, mpf, otherDeductions2017, otherDeductions2018,
-                    otherAllowances2017, otherAllowances2018, parents, siblings, siblings18,
-                    disabledSiblings, otherDisabledDependants, tax2017Provisional) {
-  let progressiveRate2017 = [
-    {step: 45000, rate: 2},
-    {step: 45000, rate: 7},
-    {step: 45000, rate: 12},
-    {step: Infinity, rate: 17},
-  ];
-  let progressiveRate2018 = [
-    {step: 50000, rate: 2},
-    {step: 50000, rate: 6},
-    {step: 50000, rate: 10},
-    {step: 50000, rate: 14},
-    {step: Infinity, rate: 17},
-  ];
-  let taxRule2017 = new TaxRule(progressiveRate2017, 15,
-                          132000, 18000, 1,
-                          46000, 46000, 23000, 23000,
-                          37500, 75000);
-  let taxRule2018 = new TaxRule(progressiveRate2018, 15,
-                          132000, 18000, 1,
-                          50000, 50000, 25000, 25000,
-                          37500, 75000);
-  let totalSiblings1 = siblings + disabledSiblings + siblings18;
-  let totalSiblings2 = siblings + disabledSiblings;
-  let disabledDependents = disabledSiblings + otherDisabledDependants;
-  let parentsCount = {
-    livingTogether: 0,
-    nonLivingTogether: 0,
-    livingTogether55: 0,
-    nonLivingTogether55: 0,
-  };
-  let parentsCount2 = {
-    livingTogether: 0,
-    nonLivingTogether: 0,
-    livingTogether55: 0,
-    nonLivingTogether55: 0,
-  };
-  for (let parentObj of parents) {
-    switch (parentObj.age) {
-      // 55 in next year
-      case 1:
-        if (parentObj.livingTogether) {
-          parentsCount2.livingTogether55++;
-        } else {
-          parentsCount2.nonLivingTogether55++;
-        }
-        break;
-      // reached 55
-      case 2:
-        if (parentObj.livingTogether) {
-          parentsCount.livingTogether55++;
-          parentsCount2.livingTogether55++;
-        } else {
-          parentsCount.nonLivingTogether55++;
-          parentsCount2.nonLivingTogether55++;
-        }
-        break;
-      // 60 in next year
-      case 3:
-        if (parentObj.livingTogether) {
-          parentsCount.livingTogether55++;
-          parentsCount2.livingTogether++;
-        } else {
-          parentsCount.nonLivingTogether55++;
-          parentsCount2.nonLivingTogether++;
-        }
-        break;
-      // disabled parent
-      case 0:
-        disabledDependents++;
-        /* eslint no-fallthrough: "off" */
-        // intentional missed break statement
-        // because all disabled parents are entitled to full allowance no matter what age
-      // reached 60 or disabled parent
-      case 4:
-        if (parentObj.livingTogether) {
-          parentsCount.livingTogether++;
-          parentsCount2.livingTogether++;
-        } else {
-          parentsCount.nonLivingTogether++;
-          parentsCount2.nonLivingTogether++;
-        }
-        break;
-    }
-  }
-  let tax2017 = taxRule2017.calculateTax(income, mpf, otherDeductions2017, otherAllowances2017, parentsCount, totalSiblings1, disabledDependents);
-  let tax2018Provisional = taxRule2018.calculateTax(income, mpf, otherDeductions2018, otherAllowances2018, parentsCount2, totalSiblings2, disabledDependents);
+function taxPayable(taxpayer, parents) {
+  let taxRule2017 = new TaxRule({
+    progressiveRate: [
+      {step: 45000, rate: 2},
+      {step: 45000, rate: 7},
+      {step: 45000, rate: 12},
+      {step: Infinity, rate: 17},
+    ],
+    stdRate: 15,
+    basicAllowance: 132000,
+    marriedAllowance: 264000,
+    mpfMax: 18000,
+    mpfMaxMultiplier: 1.0,
+    parentAllowance: 46000,
+    parentAdditionalAllowance: 46000,
+    parentAllowance55: 23000,
+    parentAdditionalAllowance55: 23000,
+    siblingAllowance: 37500,
+    disabledDependentAllowance: 75000,
+    childAllowance: 100000,
+    singleParentAllowance: 132000,
+    newbornChildAdditionalAllowance: 100000,
+    personalDisabilityAllowance: 0,
+    provisionalYear: false,
+  });
+  let taxRule2018 = new TaxRule({
+    progressiveRate: [
+      {step: 50000, rate: 2},
+      {step: 50000, rate: 6},
+      {step: 50000, rate: 10},
+      {step: 50000, rate: 14},
+      {step: Infinity, rate: 17},
+    ],
+    stdRate: 15,
+    basicAllowance: 132000,
+    marriedAllowance: 264000,
+    mpfMax: 18000,
+    mpfMaxMultiplier: 1.0,
+    parentAllowance:50000,
+    parentAdditionalAllowance: 50000,
+    parentAllowance55: 25000,
+    parentAdditionalAllowance55: 25000,
+    siblingAllowance: 37500,
+    disabledDependentAllowance: 75000,
+    childAllowance: 120000,
+    singleParentAllowance: 132000,
+    newbornChildAdditionalAllowance: 120000,
+    personalDisabilityAllowance: 75000,
+    provisionalYear: true,
+  });
+  
+  
+  let tax2017 = taxRule2017.calculateTax(taxpayer, parents);
+  let tax2018Provisional = taxRule2018.calculateTax(taxpayer, parents);
   let rebate = taxRebate(tax2017.tax);
-  let taxPayable = tax2017.tax - tax2017Provisional - rebate + tax2018Provisional.tax;
-  return {tax2017, tax2018Provisional, tax2017Provisional, rebate, taxPayable};
+  let taxPayable = tax2017.tax - taxpayer.provisionalTax - rebate + tax2018Provisional.tax;
+  return {tax2017, tax2018Provisional, tax2017Provisional: taxpayer.provisionalTax, rebate, taxPayable};
 }
 
-/* eslint no-undef: "off" */
+/* eslint-disable-next-line no-undef */
 module.exports = {TaxRule, taxRebate, taxPayable};

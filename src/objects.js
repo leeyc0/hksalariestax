@@ -2,6 +2,11 @@
 
 /*
   name: name
+  martialStatus:
+    0: Seperate Taxation
+    1: Joint Assessment
+    2: Single Parent at next year
+    3: Single Parent at previous year
   income: income
   mpf: MPF paid by employee
   otherDeductionsThisYear: all other deductions appliable to this year
@@ -11,24 +16,34 @@
   siblings: number of dependent brother or sisters
   siblings18: number of dependent brother or sisters illegible in next year
   disabledSiblings: number of disabled siblings
+  chidren: number of childen (not newborn)
+  children18: number of children illegible in next year
+  newbornChildren: number of newborn children
   otherDisabledDependants: number of disabled dependants (not siblings nor parents)
   provisionalTax: paid provisional tax
+  disabledPerson: Personal disability
 */
-function TaxPayer(name, income, mpf, otherDeductionsThisYear, otherDeductionsNextYear,
-                  otherAllowancesThisYear, otherAllowancesNextYear, siblings, siblings18,
-                  disabledSiblings, otherDisabledDependants, provisionalTax) {
-  this.name = name;
-  this.income = income;
-  this.mpf = mpf;
-  this.otherDeductionsThisYear = otherDeductionsThisYear;
-  this.otherDeductionsNextYear = otherDeductionsNextYear;
-  this.otherAllowancesThisYear = otherAllowancesThisYear;
-  this.otherAllowancesNextYear = otherAllowancesNextYear;
-  this.siblings = siblings;
-  this.siblings18 = siblings18;
-  this.disabledSiblings = disabledSiblings;
-  this.otherDisabledDependants = otherDisabledDependants;
-  this.provisionalTax = provisionalTax;
+class TaxPayer {
+  constructor (name) {
+    this.name = name;
+    this.martialStatus = 0;
+    this.income = 0;
+    this.mpf = 0;
+    this.otherDeductionsThisYear = 0;
+    this.otherDeductionsNextYear = 0;
+    this.otherAllowancesThisYear = 0;
+    this.otherAllowancesNextYear = 0;
+    this.siblings = 0;
+    this.siblings18 = 0;
+    this.disabledSiblings = 0;
+    this.children = 0;
+    this.children18 = 0;
+    this.newbornChildrenThisYear = 0;
+    this.newbornChildrenNextYear = 0;
+    this.otherDisabledDependants = 0;
+    this.provisionalTax = 0;
+    this.disabledPerson = false;
+  }
 }
 
 /*
@@ -42,11 +57,13 @@ function TaxPayer(name, income, mpf, otherDeductionsThisYear, otherDeductionsNex
   livingTogether: Object of {taxpayerid: livingTogether(boolean), ...}
   claimedBy: claimed by taxpayerid
 */
-function Parent(name, age, disabledParent, livingTogether, claimedBy) {
-  this.name = name;
-  this.age = age;
-  this.livingTogether = livingTogether;
-  this.claimedBy = claimedBy;
+class Parent {
+  constructor(name, livingTogether, claimedBy) {
+    this.name = name;
+    this.age = 1;
+    this.livingTogether = livingTogether;
+    this.claimedBy = claimedBy;
+  }
 }
 
 export default {TaxPayer, Parent};
