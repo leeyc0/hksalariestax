@@ -173,7 +173,7 @@ describe("calculateChildAllowanceAndSingleParentAllowance", function() {
     taxpayer.newbornChildrenThisYear = 1;
     taxpayer.newbornChildrenNextYear = 3;
     taxpayer.children18 = 1;
-    assert.deepStrictEqual(taxRuleDummy.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 830000, singleParentAllowance: 0}); 
+    assert.deepStrictEqual(taxRuleDummy.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 930000, singleParentAllowance: 0}); 
   });
   it("should cap maximum children = 9: newbornChild > 9", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);

@@ -187,7 +187,7 @@ class TaxRule {
     if (this.provisionalYear) {
       /* newbornChildrenNextYear:
          children born from the start of provisionalYear until the time of tax reporting */
-      children = taxpayer.children + taxpayer.newbornChildrenNextYear;
+      children = taxpayer.children + taxpayer.newbornChildrenThisYear + taxpayer.newbornChildrenNextYear;
       newbornChildren = taxpayer.newbornChildrenNextYear;
     } else {
       children = taxpayer.children + taxpayer.children18 + taxpayer.newbornChildrenThisYear;
