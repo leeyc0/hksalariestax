@@ -29,7 +29,15 @@ export default {
         updateTaxPayerTextField(this, newValue);
       },
     },
-    type: function() {return this.field==="name" ? "text" : "number";},
+    type: function() {
+      if (this.field==="name") {
+        return "text";
+      } else if (this.field==="disabledPerson") {
+        return "checkbox";
+      } else {
+        return "number";
+      }
+    },
   },
   methods: {
     deleteTaxPayer: function(event) {
@@ -39,4 +47,5 @@ export default {
   },
 };
 
+export {updateTaxPayerTextField};
 </script>

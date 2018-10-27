@@ -12,10 +12,13 @@
           <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.tax2017.mpf}}</td></tr>
           <tr><td>減：其他扣除項目</td><td>{{taxresult.tax2017.otherDeductions}}</td></tr>
           <tr><td>減：基本免稅額</td><td>{{taxresult.tax2017.basicAllowance}}</td></tr>
-          <tr><td>減：其他免稅額</td><td>{{taxresult.tax2017.otherAllowances}}</td></tr>
+          <tr><td>減：已婚人士免稅額</td><td>{{taxresult.tax2017.marriedAllowance}}</td></tr>
           <tr><td>減：供養父母/祖父母/外祖父母免稅額</td><td>{{taxresult.tax2017.parentAllowance}}</td></tr>
           <tr><td>減：供養兄弟姊妹免稅額</td><td>{{taxresult.tax2017.siblingAllowance}}</td></tr>
+          <tr><td>減：子女免稅額</td><td>{{taxresult.tax2017.childAllowance}}</td></tr>
+          <tr><td>減：單親免稅額</td><td>{{taxresult.tax2017.singleParentAllowance}}</td></tr>
           <tr><td>減：傷殘受養人免稅額</td><td>{{taxresult.tax2017.disabledDependentAllowance}}</td></tr>
+          <tr><td>減：傷殘人士免稅額</td><td>{{taxresult.tax2017.personalDisabilityAllowance}}</td></tr>
           <tr><td>應課稅入息</td><td>{{taxresult.tax2017.taxableIncome}}</td></tr>
           <tr><th colspan="2">累進稅率稅款計算</th></tr>
           <tr v-for="(tax,index) in taxresult.tax2017.progressiveTaxBreakdown" :key="index"><td>{{progressiveTaxPrefix(index,taxresult.tax2017.progressiveTaxBreakdown)+tax.step}}@{{tax.rate+"%"}}</td><td>{{tax.tax}}</td></tr>
@@ -44,10 +47,13 @@
           <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.tax2018Provisional.mpf}}</td></tr>
           <tr><td>減：其他扣除項目</td><td>{{taxresult.tax2018Provisional.otherDeductions}}</td></tr>
           <tr><td>減：基本免稅額</td><td>{{taxresult.tax2018Provisional.basicAllowance}}</td></tr>
-          <tr><td>減：其他免稅額</td><td>{{taxresult.tax2018Provisional.otherAllowances}}</td></tr>
+          <tr><td>減：已婚人士免稅額</td><td>{{taxresult.tax2018Provisional.marriedAllowance}}</td></tr>
           <tr><td>減：供養父母/祖父母/外祖父母免稅額</td><td>{{taxresult.tax2018Provisional.parentAllowance}}</td></tr>
           <tr><td>減：供養兄弟姊妹免稅額</td><td>{{taxresult.tax2018Provisional.siblingAllowance}}</td></tr>
+          <tr><td>減：子女免稅額</td><td>{{taxresult.tax2018Provisional.childAllowance}}</td></tr>
+          <tr><td>減：單親免稅額</td><td>{{taxresult.tax2018Provisional.singleParentAllowance}}</td></tr>
           <tr><td>減：傷殘受養人免稅額</td><td>{{taxresult.tax2018Provisional.disabledDependentAllowance}}</td></tr>
+          <tr><td>減：傷殘人士免稅額</td><td>{{taxresult.tax2018Provisional.personalDisabilityAllowance}}</td></tr>
           <tr><td>應課稅入息</td><td>{{taxresult.tax2018Provisional.taxableIncome}}</td></tr>
           <tr><th colspan="2">累進稅率稅款計算</th></tr>
           <tr v-for="(tax,index) in taxresult.tax2018Provisional.progressiveTaxBreakdown" :key="index"><td>{{progressiveTaxPrefix(index,taxresult.tax2018Provisional.progressiveTaxBreakdown)+tax.step}}@{{tax.rate+"%"}}</td><td>{{tax.tax}}</td></tr>
