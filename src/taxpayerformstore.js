@@ -14,8 +14,8 @@ const initialState = {
   totalSiblings: 0,
   totalSiblings18: 0,
   totalDisabledSiblings: 0,
-  taxYear1: "2017/18",
-  taxYear2: "2018/19",
+  taxYear1: "2018/19",
+  taxYear2: "2019/20",
 };
 initialState.taxpayers[initialState.taxpayerId] = new obj.TaxPayer("納稅人1");
 initialState.taxresults[initialState.taxpayerId] = {taxPayable: null};

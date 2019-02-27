@@ -635,7 +635,7 @@ describe("taxRebate", function() {
     assert.equal(taxRebate(25000), 18750);
   });
   it("cap when tax rebate amount reaches cap", function() {
-    assert.equal(taxRebate(45000), 30000);
+    assert.equal(taxRebate(45000), 20000);
   });
 });
 
@@ -671,33 +671,34 @@ describe("taxPayable both year", function() {
   
   it("progressive rate both year", function() {
     let expectedResult = {
-      tax2017: {
+      taxThisYear: {
         income: 824000,
-        taxableIncome: 239000,
+        taxableIncome: 221000,
         taxableIncomeStdRate: 803000,
         mpf: 1000,
         otherDeductions: 20000,
         basicAllowance: 132000,
         marriedAllowance: 0,
-        parentAllowance: 207000,
+        parentAllowance: 225000,
         siblingAllowance: 75000,
         disabledDependentAllowance: 150000,
         childAllowance: 0,
         singleParentAllowance: 0,
         personalDisabilityAllowance: 0,
         progressiveTaxBreakdown: [
-          {"step":45000,"rate":2,"tax":900},
-          {"step":45000,"rate":7,"tax":3150},
-          {"step":45000,"rate":12,"tax":5400},
-          {"step":104000,"rate":17,"tax":17680}
+          {"step":50000,"rate":2,"tax":1000},
+          {"step":50000,"rate":6,"tax":3000},
+          {"step":50000,"rate":10,"tax":5000},
+          {"step":50000,"rate":14,"tax":7000},
+          {"step":21000,"rate":17,"tax":3570}
         ],
-        progressiveTax: 27130,
+        progressiveTax: 19570,
         stdRateTax: 120450,
         stdRate: 15,
         rate: 'progressiveTax',
-        tax: 27130
+        tax: 19570
       },
-      tax2018Provisional: {
+      taxNextYearProvisional: {
         income: 824000,
         taxableIncome: 216000,
         taxableIncomeStdRate: 798000,
@@ -724,49 +725,23 @@ describe("taxPayable both year", function() {
         rate: 'progressiveTax',
         tax: 18720
       },
-      tax2017Provisional: 500,
-      rebate: 20348,
-      taxPayable: 25002,
+      taxThisYearProvisional: 500,
+      rebate: 14678,
+      taxPayable: 23112,
     };
     let actualResult = taxPayable(taxpayer,parents);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
   
-  it("standard rate 2017 progressive rate 2018", function() {
-    taxpayer.income = 5620000;
+  it("standard rate both year", function() {
+    taxpayer.income = 6100000;
     let expectedResult = {
-      tax2017: {
-        income: 5620000,
-        taxableIncome: 5035000,
-        taxableIncomeStdRate: 5599000,
+      taxThisYear: {
+        income: 6100000,
+        taxableIncome: 5497000,
+        taxableIncomeStdRate: 6079000,
         mpf: 1000,
         otherDeductions: 20000,
-        basicAllowance: 132000,
-        marriedAllowance: 0,
-        parentAllowance: 207000,
-        siblingAllowance: 75000,
-        disabledDependentAllowance: 150000,
-        childAllowance: 0,
-        singleParentAllowance: 0,
-        personalDisabilityAllowance: 0,
-        progressiveTaxBreakdown: [
-          {"step":45000,"rate":2,"tax":900},
-          {"step":45000,"rate":7,"tax":3150},
-          {"step":45000,"rate":12,"tax":5400},
-          {"step":4900000,"rate":17,"tax":833000}
-        ],
-        progressiveTax: 842450,
-        stdRateTax: 839850,
-        stdRate: 15,
-        rate: 'stdRateTax',
-        tax: 839850
-      },
-      tax2018Provisional: {
-        income: 5620000,
-        taxableIncome: 5012000,
-        taxableIncomeStdRate: 5594000,
-        mpf: 1000,
-        otherDeductions: 25000,
         basicAllowance: 132000,
         marriedAllowance: 0,
         parentAllowance: 225000,
@@ -780,52 +755,15 @@ describe("taxPayable both year", function() {
           {"step":50000,"rate":6,"tax":3000},
           {"step":50000,"rate":10,"tax":5000},
           {"step":50000,"rate":14,"tax":7000},
-          {"step":4812000,"rate":17,"tax":818040}
+          {"step":5297000,"rate":17,"tax":900490}
         ],
-        progressiveTax: 834040,
-        stdRateTax: 839100,
-        stdRate: 15,
-        rate: 'progressiveTax',
-        tax: 834040
-      },
-      tax2017Provisional: 500,
-      rebate: 30000,
-      taxPayable: 1643390
-    };
-    let actualResult = taxPayable(taxpayer,parents);
-    assert.deepStrictEqual(actualResult, expectedResult);
-  });
-  
-  it("standard rate both year", function() {
-    taxpayer.income = 6100000;
-    let expectedResult = {
-      tax2017: {
-        income: 6100000,
-        taxableIncome: 5515000,
-        taxableIncomeStdRate: 6079000,
-        mpf: 1000,
-        otherDeductions: 20000,
-        basicAllowance: 132000,
-        marriedAllowance: 0,
-        parentAllowance: 207000,
-        siblingAllowance: 75000,
-        disabledDependentAllowance: 150000,
-        personalDisabilityAllowance: 0,
-        childAllowance: 0,
-        singleParentAllowance: 0,
-        progressiveTaxBreakdown: [
-          {"step":45000,"rate":2,"tax":900},
-          {"step":45000,"rate":7,"tax":3150},
-          {"step":45000,"rate":12,"tax":5400},
-          {"step":5380000,"rate":17,"tax":914600}
-        ],
-        progressiveTax: 924050,
+        progressiveTax: 916490,
         stdRateTax: 911850,
         stdRate: 15,
         rate: 'stdRateTax',
         tax: 911850
       },
-      tax2018Provisional: {
+      taxNextYearProvisional: {
         income: 6100000,
         taxableIncome: 5492000,
         taxableIncomeStdRate: 6074000,
@@ -852,9 +790,9 @@ describe("taxPayable both year", function() {
         rate: 'stdRateTax',
         tax: 911100
       },
-      tax2017Provisional: 500,
-      rebate: 30000,
-      taxPayable: 1792450
+      taxThisYearProvisional: 500,
+      rebate: 20000,
+      taxPayable: 1802450
     };
     let actualResult = taxPayable(taxpayer,parents)
     assert.deepStrictEqual(actualResult, expectedResult);

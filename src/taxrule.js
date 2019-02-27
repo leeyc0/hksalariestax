@@ -306,7 +306,7 @@ class TaxRule {
 
 function taxRebate(tax) {
   let rebateRate = 75;
-  let maxRebate = 30000;
+  let maxRebate = 20000;
   let rebate = Math.ceil(tax * rebateRate / 100);
 
   if (rebate > maxRebate) {
@@ -321,11 +321,12 @@ function taxRebate(tax) {
   parents: array of {age:int(0-4), livingTogether:boolean}, see objects.js function Parent for attr definition
 */
 function taxPayable(taxpayer, parents) {
-  let taxRule2017 = new TaxRule({
+  let taxRule2018 = new TaxRule({
     progressiveRate: [
-      {step: 45000, rate: 2},
-      {step: 45000, rate: 7},
-      {step: 45000, rate: 12},
+      {step: 50000, rate: 2},
+      {step: 50000, rate: 6},
+      {step: 50000, rate: 10},
+      {step: 50000, rate: 14},
       {step: Infinity, rate: 17},
     ],
     stdRate: 15,
@@ -333,19 +334,19 @@ function taxPayable(taxpayer, parents) {
     marriedAllowance: 264000,
     mpfMax: 18000,
     mpfMaxMultiplier: 1.0,
-    parentAllowance: 46000,
-    parentAdditionalAllowance: 46000,
-    parentAllowance55: 23000,
-    parentAdditionalAllowance55: 23000,
+    parentAllowance:50000,
+    parentAdditionalAllowance: 50000,
+    parentAllowance55: 25000,
+    parentAdditionalAllowance55: 25000,
     siblingAllowance: 37500,
     disabledDependentAllowance: 75000,
-    childAllowance: 100000,
+    childAllowance: 120000,
     singleParentAllowance: 132000,
-    newbornChildAdditionalAllowance: 100000,
-    personalDisabilityAllowance: 0,
+    newbornChildAdditionalAllowance: 120000,
+    personalDisabilityAllowance: 75000,
     provisionalYear: false,
   });
-  let taxRule2018 = new TaxRule({
+  let taxRule2019 = new TaxRule({
     progressiveRate: [
       {step: 50000, rate: 2},
       {step: 50000, rate: 6},
@@ -372,11 +373,11 @@ function taxPayable(taxpayer, parents) {
   });
   
   
-  let tax2017 = taxRule2017.calculateTax(taxpayer, parents);
-  let tax2018Provisional = taxRule2018.calculateTax(taxpayer, parents);
-  let rebate = taxRebate(tax2017.tax);
-  let taxPayable = tax2017.tax - taxpayer.provisionalTax - rebate + tax2018Provisional.tax;
-  return {tax2017, tax2018Provisional, tax2017Provisional: taxpayer.provisionalTax, rebate, taxPayable};
+  let taxThisYear = taxRule2018.calculateTax(taxpayer, parents);
+  let taxNextYearProvisional = taxRule2019.calculateTax(taxpayer, parents);
+  let rebate = taxRebate(taxThisYear.tax);
+  let taxPayable = taxThisYear.tax - taxpayer.provisionalTax - rebate + taxNextYearProvisional.tax;
+  return {taxThisYear, taxNextYearProvisional, taxThisYearProvisional: taxpayer.provisionalTax, rebate, taxPayable};
 }
 
 /* eslint-disable-next-line no-undef */

@@ -8,69 +8,69 @@
         <table v-if="taxresult.taxPayable != null" class="taxtable_table">
           <tr><th colspan="2">{{taxYear1}}年度</th></tr>
           <tr><th colspan="2">累進稅率</th></tr>
-          <tr><td>總入息</td><td>{{taxresult.tax2017.income}}</td></tr>
-          <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.tax2017.mpf}}</td></tr>
-          <tr><td>減：其他扣除項目</td><td>{{taxresult.tax2017.otherDeductions}}</td></tr>
-          <tr><td>減：基本免稅額</td><td>{{taxresult.tax2017.basicAllowance}}</td></tr>
-          <tr><td>減：已婚人士免稅額</td><td>{{taxresult.tax2017.marriedAllowance}}</td></tr>
-          <tr><td>減：供養父母/祖父母/外祖父母免稅額</td><td>{{taxresult.tax2017.parentAllowance}}</td></tr>
-          <tr><td>減：供養兄弟姊妹免稅額</td><td>{{taxresult.tax2017.siblingAllowance}}</td></tr>
-          <tr><td>減：子女免稅額</td><td>{{taxresult.tax2017.childAllowance}}</td></tr>
-          <tr><td>減：單親免稅額</td><td>{{taxresult.tax2017.singleParentAllowance}}</td></tr>
-          <tr><td>減：傷殘受養人免稅額</td><td>{{taxresult.tax2017.disabledDependentAllowance}}</td></tr>
-          <tr><td>減：傷殘人士免稅額</td><td>{{taxresult.tax2017.personalDisabilityAllowance}}</td></tr>
-          <tr><td>應課稅入息</td><td>{{taxresult.tax2017.taxableIncome}}</td></tr>
+          <tr><td>總入息</td><td>{{taxresult.taxThisYear.income}}</td></tr>
+          <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.taxThisYear.mpf}}</td></tr>
+          <tr><td>減：其他扣除項目</td><td>{{taxresult.taxThisYear.otherDeductions}}</td></tr>
+          <tr><td>減：基本免稅額</td><td>{{taxresult.taxThisYear.basicAllowance}}</td></tr>
+          <tr><td>減：已婚人士免稅額</td><td>{{taxresult.taxThisYear.marriedAllowance}}</td></tr>
+          <tr><td>減：供養父母/祖父母/外祖父母免稅額</td><td>{{taxresult.taxThisYear.parentAllowance}}</td></tr>
+          <tr><td>減：供養兄弟姊妹免稅額</td><td>{{taxresult.taxThisYear.siblingAllowance}}</td></tr>
+          <tr><td>減：子女免稅額</td><td>{{taxresult.taxThisYear.childAllowance}}</td></tr>
+          <tr><td>減：單親免稅額</td><td>{{taxresult.taxThisYear.singleParentAllowance}}</td></tr>
+          <tr><td>減：傷殘受養人免稅額</td><td>{{taxresult.taxThisYear.disabledDependentAllowance}}</td></tr>
+          <tr><td>減：傷殘人士免稅額</td><td>{{taxresult.taxThisYear.personalDisabilityAllowance}}</td></tr>
+          <tr><td>應課稅入息</td><td>{{taxresult.taxThisYear.taxableIncome}}</td></tr>
           <tr><th colspan="2">累進稅率稅款計算</th></tr>
-          <tr v-for="(tax,index) in taxresult.tax2017.progressiveTaxBreakdown" :key="index"><td>{{progressiveTaxPrefix(index,taxresult.tax2017.progressiveTaxBreakdown)+tax.step}}@{{tax.rate+"%"}}</td><td>{{tax.tax}}</td></tr>
-          <tr v-for="i in progressive2017ExtraLines" :key="'progressive2017ExtraLines'+i"><td>&nbsp;</td><td>&nbsp;</td></tr>
-          <tr><td>累進稅率稅款：</td><td>{{taxresult.tax2017.progressiveTax}}</td></tr>
+          <tr v-for="(tax,index) in taxresult.taxThisYear.progressiveTaxBreakdown" :key="index"><td>{{progressiveTaxPrefix(index,taxresult.taxThisYear.progressiveTaxBreakdown)+tax.step}}@{{tax.rate+"%"}}</td><td>{{tax.tax}}</td></tr>
+          <tr v-for="i in progressiveLastYearExtraLines" :key="'progressiveLastYearExtraLines'+i"><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td>累進稅率稅款：</td><td>{{taxresult.taxThisYear.progressiveTax}}</td></tr>
           <tr><td colspan="2"></td></tr>
           <tr><th colspan="2">標準稅率</th></tr>
-          <tr><td>總入息</td><td>{{taxresult.tax2017.income}}</td></tr>
-          <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.tax2017.mpf}}</td></tr>
-          <tr><td>減：其他扣除項目</td><td>{{taxresult.tax2017.otherDeductions}}</td></tr>
-          <tr><td>應課稅入息</td><td>{{taxresult.tax2017.taxableIncomeStdRate}}</td></tr>
-          <tr><td>標準稅率稅款計算：全數@{{taxresult.tax2017.stdRate}}%</td><td>{{taxresult.tax2017.stdRateTax}}</td>
+          <tr><td>總入息</td><td>{{taxresult.taxThisYear.income}}</td></tr>
+          <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.taxThisYear.mpf}}</td></tr>
+          <tr><td>減：其他扣除項目</td><td>{{taxresult.taxThisYear.otherDeductions}}</td></tr>
+          <tr><td>應課稅入息</td><td>{{taxresult.taxThisYear.taxableIncomeStdRate}}</td></tr>
+          <tr><td>標準稅率稅款計算：全數@{{taxresult.taxThisYear.stdRate}}%</td><td>{{taxresult.taxThisYear.stdRateTax}}</td>
           <tr><td colspan="2"></td></tr>
           <tr><th colspan="2">{{taxYear1}}年度最終稅款</th>
-          <tr><td>適用稅率：{{taxresult.tax2017.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td><td>{{taxresult.tax2017.tax}}</td></tr>
-          <tr><td>減：{{taxYear1}}年度暫繳稅實額</td><td>{{taxresult.tax2017Provisional}}</td></tr>
+          <tr><td>適用稅率：{{taxresult.taxThisYear.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td><td>{{taxresult.taxThisYear.tax}}</td></tr>
+          <tr><td>減：{{taxYear1}}年度暫繳稅實額</td><td>{{taxresult.taxThisYearProvisional}}</td></tr>
           <tr><td>減：稅務寬減</td><td>{{taxresult.rebate}}</td></tr>
-          <tr><th>{{taxYear1}}年度最終稅款</th><th>{{taxresult.tax2017.tax - taxresult.tax2017Provisional - taxresult.rebate}}</th></tr>
+          <tr><th>{{taxYear1}}年度最終稅款</th><th>{{taxresult.taxThisYear.tax - taxresult.taxThisYearProvisional - taxresult.rebate}}</th></tr>
         </table>
       </div>
       <div class="taxtable_div">
         <table v-if="taxresult.taxPayable != null" class="taxtable_table">
           <tr><th colspan="2">{{taxYear2}}年度</th></tr>
           <tr><th colspan="2">累進稅率</th></tr>
-          <tr><td>總入息</td><td>{{taxresult.tax2018Provisional.income}}</td></tr>
-          <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.tax2018Provisional.mpf}}</td></tr>
-          <tr><td>減：其他扣除項目</td><td>{{taxresult.tax2018Provisional.otherDeductions}}</td></tr>
-          <tr><td>減：基本免稅額</td><td>{{taxresult.tax2018Provisional.basicAllowance}}</td></tr>
-          <tr><td>減：已婚人士免稅額</td><td>{{taxresult.tax2018Provisional.marriedAllowance}}</td></tr>
-          <tr><td>減：供養父母/祖父母/外祖父母免稅額</td><td>{{taxresult.tax2018Provisional.parentAllowance}}</td></tr>
-          <tr><td>減：供養兄弟姊妹免稅額</td><td>{{taxresult.tax2018Provisional.siblingAllowance}}</td></tr>
-          <tr><td>減：子女免稅額</td><td>{{taxresult.tax2018Provisional.childAllowance}}</td></tr>
-          <tr><td>減：單親免稅額</td><td>{{taxresult.tax2018Provisional.singleParentAllowance}}</td></tr>
-          <tr><td>減：傷殘受養人免稅額</td><td>{{taxresult.tax2018Provisional.disabledDependentAllowance}}</td></tr>
-          <tr><td>減：傷殘人士免稅額</td><td>{{taxresult.tax2018Provisional.personalDisabilityAllowance}}</td></tr>
-          <tr><td>應課稅入息</td><td>{{taxresult.tax2018Provisional.taxableIncome}}</td></tr>
+          <tr><td>總入息</td><td>{{taxresult.taxNextYearProvisional.income}}</td></tr>
+          <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.taxNextYearProvisional.mpf}}</td></tr>
+          <tr><td>減：其他扣除項目</td><td>{{taxresult.taxNextYearProvisional.otherDeductions}}</td></tr>
+          <tr><td>減：基本免稅額</td><td>{{taxresult.taxNextYearProvisional.basicAllowance}}</td></tr>
+          <tr><td>減：已婚人士免稅額</td><td>{{taxresult.taxNextYearProvisional.marriedAllowance}}</td></tr>
+          <tr><td>減：供養父母/祖父母/外祖父母免稅額</td><td>{{taxresult.taxNextYearProvisional.parentAllowance}}</td></tr>
+          <tr><td>減：供養兄弟姊妹免稅額</td><td>{{taxresult.taxNextYearProvisional.siblingAllowance}}</td></tr>
+          <tr><td>減：子女免稅額</td><td>{{taxresult.taxNextYearProvisional.childAllowance}}</td></tr>
+          <tr><td>減：單親免稅額</td><td>{{taxresult.taxNextYearProvisional.singleParentAllowance}}</td></tr>
+          <tr><td>減：傷殘受養人免稅額</td><td>{{taxresult.taxNextYearProvisional.disabledDependentAllowance}}</td></tr>
+          <tr><td>減：傷殘人士免稅額</td><td>{{taxresult.taxNextYearProvisional.personalDisabilityAllowance}}</td></tr>
+          <tr><td>應課稅入息</td><td>{{taxresult.taxNextYearProvisional.taxableIncome}}</td></tr>
           <tr><th colspan="2">累進稅率稅款計算</th></tr>
-          <tr v-for="(tax,index) in taxresult.tax2018Provisional.progressiveTaxBreakdown" :key="index"><td>{{progressiveTaxPrefix(index,taxresult.tax2018Provisional.progressiveTaxBreakdown)+tax.step}}@{{tax.rate+"%"}}</td><td>{{tax.tax}}</td></tr>
-          <tr v-for="i in progressive2018ExtraLines" :key="'progressive2018ExtraLines'+i"><td>&nbsp;</td><td>&nbsp;</td></tr>
-          <tr><td>累進稅率稅款：</td><td>{{taxresult.tax2018Provisional.progressiveTax}}</td></tr>
+          <tr v-for="(tax,index) in taxresult.taxNextYearProvisional.progressiveTaxBreakdown" :key="index"><td>{{progressiveTaxPrefix(index,taxresult.taxNextYearProvisional.progressiveTaxBreakdown)+tax.step}}@{{tax.rate+"%"}}</td><td>{{tax.tax}}</td></tr>
+          <tr v-for="i in progressiveNextYearExtraLines" :key="'progressiveNextYearExtraLines'+i"><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td>累進稅率稅款：</td><td>{{taxresult.taxNextYearProvisional.progressiveTax}}</td></tr>
           <tr><td colspan="2"></td></tr>
           <tr><th colspan="2">標準稅率</th></tr>
-          <tr><td>總入息</td><td>{{taxresult.tax2018Provisional.income}}</td></tr>
-          <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.tax2018Provisional.mpf}}</td></tr>
-          <tr><td>減：其他扣除項目</td><td>{{taxresult.tax2018Provisional.otherDeductions}}</td></tr>
-          <tr><td>應課稅入息</td><td>{{taxresult.tax2018Provisional.taxableIncomeStdRate}}</td></tr>
-          <tr><td>標準稅率稅款計算：全數@{{taxresult.tax2018Provisional.stdRate}}%</td><td>{{taxresult.tax2018Provisional.stdRateTax}}</td>
+          <tr><td>總入息</td><td>{{taxresult.taxNextYearProvisional.income}}</td></tr>
+          <tr><td>減：扣除項目：強積金僱員供款</td><td>{{taxresult.taxNextYearProvisional.mpf}}</td></tr>
+          <tr><td>減：其他扣除項目</td><td>{{taxresult.taxNextYearProvisional.otherDeductions}}</td></tr>
+          <tr><td>應課稅入息</td><td>{{taxresult.taxNextYearProvisional.taxableIncomeStdRate}}</td></tr>
+          <tr><td>標準稅率稅款計算：全數@{{taxresult.taxNextYearProvisional.stdRate}}%</td><td>{{taxresult.taxNextYearProvisional.stdRateTax}}</td>
           <tr><td colspan="2"></td></tr>
           <tr><th colspan="2">{{taxYear2}}年度暫繳稅</th>
-          <tr><td>適用稅率：{{taxresult.tax2018Provisional.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td><td>{{taxresult.tax2018Provisional.tax}}</td></tr>
+          <tr><td>適用稅率：{{taxresult.taxNextYearProvisional.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td><td>{{taxresult.taxNextYearProvisional.tax}}</td></tr>
           <tr v-for="i in 2" :key="'dummy'+i"><td>&nbsp;</td><td>&nbsp;</td></tr>
-          <tr><th>{{taxYear2}}年度暫繳稅</th><th>{{taxresult.tax2018Provisional.tax}}</th></tr>
+          <tr><th>{{taxYear2}}年度暫繳稅</th><th>{{taxresult.taxNextYearProvisional.tax}}</th></tr>
         </table>
       </div>
     </div>
@@ -83,7 +83,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import VModal from 'vue-js-modal';
-/* eslint no-unused-vars: "off" */
 Vue.use(VModal);
 
 export default {
@@ -94,12 +93,12 @@ export default {
     taxpayable: function() {return this.taxresult.taxPayable;},
     breakdown: function() {return JSON.stringify(this.taxresult, null, 2);},
     taxpayableModalName: function() {return "taxpayableModal"+this.index;},
-    progressive2017ExtraLines: function() {
-      let lines = this.taxresult.tax2018Provisional.progressiveTaxBreakdown.length - this.taxresult.tax2017.progressiveTaxBreakdown.length;
+    progressiveLastYearExtraLines: function() {
+      let lines = this.taxresult.taxNextYearProvisional.progressiveTaxBreakdown.length - this.taxresult.taxThisYear.progressiveTaxBreakdown.length;
       return lines<0 ? 0 : lines;
     },
-    progressive2018ExtraLines: function() {
-      let lines = this.taxresult.tax2017.progressiveTaxBreakdown.length - this.taxresult.tax2018Provisional.progressiveTaxBreakdown.length;
+    progressiveNextYearExtraLines: function() {
+      let lines = this.taxresult.taxThisYear.progressiveTaxBreakdown.length - this.taxresult.taxNextYearProvisional.progressiveTaxBreakdown.length;
       return lines<0 ? 0 : lines;
     },
   },
