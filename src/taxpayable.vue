@@ -22,7 +22,7 @@
           <tr><td>應課稅入息</td><td>{{taxresult.taxThisYear.taxableIncome}}</td></tr>
           <tr><th colspan="2">累進稅率稅款計算</th></tr>
           <tr v-for="(tax,index) in taxresult.taxThisYear.progressiveTaxBreakdown" :key="index"><td>{{progressiveTaxPrefix(index,taxresult.taxThisYear.progressiveTaxBreakdown)+tax.step}}@{{tax.rate+"%"}}</td><td>{{tax.tax}}</td></tr>
-          <tr v-for="i in progressiveLastYearExtraLines" :key="'progressiveLastYearExtraLines'+i"><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr v-for="i in progressiveThisYearExtraLines" :key="'progressiveThisYearExtraLines'+i"><td>&nbsp;</td><td>&nbsp;</td></tr>
           <tr><td>累進稅率稅款：</td><td>{{taxresult.taxThisYear.progressiveTax}}</td></tr>
           <tr><td colspan="2"></td></tr>
           <tr><th colspan="2">標準稅率</th></tr>
@@ -93,7 +93,7 @@ export default {
     taxpayable: function() {return this.taxresult.taxPayable;},
     breakdown: function() {return JSON.stringify(this.taxresult, null, 2);},
     taxpayableModalName: function() {return "taxpayableModal"+this.index;},
-    progressiveLastYearExtraLines: function() {
+    progressiveThisYearExtraLines: function() {
       let lines = this.taxresult.taxNextYearProvisional.progressiveTaxBreakdown.length - this.taxresult.taxThisYear.progressiveTaxBreakdown.length;
       return lines<0 ? 0 : lines;
     },
