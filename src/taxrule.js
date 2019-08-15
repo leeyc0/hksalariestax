@@ -305,7 +305,7 @@ class TaxRule {
 }
 
 function taxRebate(tax) {
-  let rebateRate = 75;
+  let rebateRate = 100;
   let maxRebate = 20000;
   let rebate = Math.ceil(tax * rebateRate / 100);
 

@@ -632,7 +632,7 @@ describe("calculateTax", function() {
 
 describe("taxRebate", function() {
   it("rebate pro-rata when amount below cap", function() {
-    assert.equal(taxRebate(25000), 18750);
+    assert.equal(taxRebate(15000), 15000);
   });
   it("cap when tax rebate amount reaches cap", function() {
     assert.equal(taxRebate(45000), 20000);
@@ -726,8 +726,8 @@ describe("taxPayable both year", function() {
         tax: 18720
       },
       taxThisYearProvisional: 500,
-      rebate: 14678,
-      taxPayable: 23112,
+      rebate: 19570,
+      taxPayable: 18220,
     };
     let actualResult = taxPayable(taxpayer,parents);
     assert.deepStrictEqual(actualResult, expectedResult);
