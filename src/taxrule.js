@@ -321,7 +321,7 @@ function taxRebate(tax) {
   parents: array of {age:int(0-4), livingTogether:boolean}, see objects.js function Parent for attr definition
 */
 function taxPayable(taxpayer, parents) {
-  let taxRule2018 = new TaxRule({
+  let taxRule2019 = new TaxRule({
     progressiveRate: [
       {step: 50000, rate: 2},
       {step: 50000, rate: 6},
@@ -346,7 +346,7 @@ function taxPayable(taxpayer, parents) {
     personalDisabilityAllowance: 75000,
     provisionalYear: false,
   });
-  let taxRule2019 = new TaxRule({
+  let taxRule2020 = new TaxRule({
     progressiveRate: [
       {step: 50000, rate: 2},
       {step: 50000, rate: 6},
@@ -373,8 +373,8 @@ function taxPayable(taxpayer, parents) {
   });
   
   
-  let taxThisYear = taxRule2018.calculateTax(taxpayer, parents);
-  let taxNextYearProvisional = taxRule2019.calculateTax(taxpayer, parents);
+  let taxThisYear = taxRule2019.calculateTax(taxpayer, parents);
+  let taxNextYearProvisional = taxRule2020.calculateTax(taxpayer, parents);
   let rebate = taxRebate(taxThisYear.tax);
   let taxPayable = taxThisYear.tax - taxpayer.provisionalTax - rebate + taxNextYearProvisional.tax;
   return {taxThisYear, taxNextYearProvisional, taxThisYearProvisional: taxpayer.provisionalTax, rebate, taxPayable};
