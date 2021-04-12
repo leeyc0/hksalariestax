@@ -8,4 +8,4 @@ Please read the [wiki](https://github.com/leeyc0/hksalariestax/wiki) for user gu
 2. `npm install --save-dev`
 3. `npm run build` (production build)   
    `npm run build-dev` (development build)
-4. Contents are served at docs directory
+4. Contents are served at dist directory
