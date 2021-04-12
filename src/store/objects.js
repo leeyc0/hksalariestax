@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /*
   name: name
@@ -11,8 +11,6 @@
   mpf: MPF paid by employee
   otherDeductionsThisYear: all other deductions appliable to this year
   otherDeductionsNextYear: all other deductions applicable to next year
-  otherAllowancesThisYear: all other allowances applicable to this year
-  otherAllowancesNextYear: all other allowances appliable to this year
   siblings: number of dependent brother or sisters
   siblings18: number of dependent brother or sisters illegible in next year
   disabledSiblings: number of disabled siblings
@@ -23,26 +21,24 @@
   provisionalTax: paid provisional tax
   disabledPerson: Personal disability
 */
-class TaxPayer {
+export class TaxPayer {
   constructor (name) {
-    this.name = name;
-    this.martialStatus = 0;
-    this.income = 0;
-    this.mpf = 0;
-    this.otherDeductionsThisYear = 0;
-    this.otherDeductionsNextYear = 0;
-    this.otherAllowancesThisYear = 0;
-    this.otherAllowancesNextYear = 0;
-    this.siblings = 0;
-    this.siblings18 = 0;
-    this.disabledSiblings = 0;
-    this.children = 0;
-    this.children18 = 0;
-    this.newbornChildrenThisYear = 0;
-    this.newbornChildrenNextYear = 0;
-    this.otherDisabledDependants = 0;
-    this.provisionalTax = 0;
-    this.disabledPerson = false;
+    this.name = name
+    this.martialStatus = 0
+    this.income = 0
+    this.mpf = 0
+    this.otherDeductionsThisYear = 0
+    this.otherDeductionsNextYear = 0
+    this.siblings = 0
+    this.siblings18 = 0
+    this.disabledSiblings = 0
+    this.children = 0
+    this.children18 = 0
+    this.newbornChildrenThisYear = 0
+    this.newbornChildrenNextYear = 0
+    this.otherDisabledDependants = 0
+    this.provisionalTax = 0
+    this.disabledPerson = false
   }
 }
 
@@ -54,16 +50,14 @@ class TaxPayer {
        2 = reach 55 in prev year
        3 = reach 65 in next year
        4 = reach 65 in prev year
-  livingTogether: Object of {taxpayerid: livingTogether(boolean), ...}
+  livingTogether: Map of (taxpayerid, livingTogether(boolean))
   claimedBy: claimed by taxpayerid
 */
-class Parent {
-  constructor(name, livingTogether, claimedBy) {
-    this.name = name;
-    this.age = 1;
-    this.livingTogether = livingTogether;
-    this.claimedBy = claimedBy;
+export class Parent {
+  constructor (name, claimedBy) {
+    this.name = name
+    this.age = 1
+    this.livingTogether = new Map()
+    this.claimedBy = claimedBy
   }
 }
-
-export default {TaxPayer, Parent};

@@ -1,69 +1,70 @@
-"use strict";
+'use strict'
 
-function* distinglishableBallInBoxes(balls, boxes) {
-  let counter=0;
-  let numberOfBalls = balls.length;
-  let numberOfBoxes = boxes.length;
-  let maxCounter = numberOfBoxes**numberOfBalls;
+function * distinglishableBallInBoxes (balls, boxes) {
+  let counter = 0
+  const numberOfBalls = balls.length
+  const numberOfBoxes = boxes.length
+  const maxCounter = numberOfBoxes ** numberOfBalls
   while (counter < maxCounter) {
-    let boxOutput = {};
-    for (let box of boxes) {
-      boxOutput[box] = [];
+    const boxOutput = new Map()
+    for (const box of boxes) {
+      boxOutput.set(box, [])
     }
-    for (let i=0; i<numberOfBalls; i++) {
-      let digit = (Math.floor(counter / (numberOfBoxes**i))) % numberOfBoxes;
-      let ballInBox = boxes[digit];
-      boxOutput[ballInBox].unshift(balls[numberOfBalls-1-i]);
+    for (let i = 0; i < numberOfBalls; i++) {
+      const digit = (Math.floor(counter / (numberOfBoxes ** i))) % numberOfBoxes
+      const ballInBox = boxes[digit]
+      boxOutput.get(ballInBox).unshift(balls[numberOfBalls - 1 - i])
     }
-    counter++;
-    yield boxOutput;
+    counter++
+    yield boxOutput
   }
 }
 
-function* indistinglishableBallInBoxes(numberOfBalls, boxes) {
-  let i=0;
-  let j=0;
-  let numberOfBoxes = boxes.length;
-  let boxOutput = {};
-  for (let box of boxes) {
-    boxOutput[box] = 0;
+function * indistinglishableBallInBoxes (numberOfBalls, boxes) {
+  let i = 0
+  let j = 0
+  const numberOfBoxes = boxes.length
+  const boxOutput = new Map()
+
+  for (const box of boxes) {
+    boxOutput.set(box, 0)
   }
-  boxOutput[boxes[0]] = numberOfBalls;
+  boxOutput.set(boxes[0], numberOfBalls)
 
   while (true) {
-    yield boxOutput;
-    if (boxOutput[boxes[numberOfBoxes-1]] === numberOfBalls) {
-      break;
+    yield boxOutput
+    if (boxOutput.get(boxes[numberOfBoxes - 1]) === numberOfBalls) {
+      break
     }
-    if (j === numberOfBoxes-1) {
+    if (j === numberOfBoxes - 1) {
       do {
-        j--;
-      } while (boxOutput[boxes[j]] === 0);
+        j--
+      } while (boxOutput.get(boxes[j]) === 0)
       if (i === j) {
-        boxOutput[boxes[i]]--;
-        i++;
-        j=i;
-        boxOutput[boxes[i]] = boxOutput[boxes[numberOfBoxes-1]] + 1;
-        if (i !== numberOfBoxes-1) {
-          boxOutput[boxes[numberOfBoxes-1]] = 0;
+        boxOutput.set(boxes[i], boxOutput.get(boxes[i]) - 1)
+        i++
+        j = i
+        boxOutput.set(boxes[i], boxOutput.get(boxes[numberOfBoxes - 1]) + 1)
+        if (i !== numberOfBoxes - 1) {
+          boxOutput.set(boxes[numberOfBoxes - 1], 0)
         }
       } else {
-        boxOutput[boxes[j]]--;
-        j++;
-        boxOutput[boxes[j]] = boxOutput[boxes[numberOfBoxes-1]] + 1;
-        if (j !== numberOfBoxes-1) {
-          boxOutput[boxes[numberOfBoxes-1]] = 0;
+        boxOutput.set(boxes[j], boxOutput.get(boxes[j]) - 1)
+        j++
+        boxOutput.set(boxes[j], boxOutput.get(boxes[numberOfBoxes - 1]) + 1)
+        if (j !== numberOfBoxes - 1) {
+          boxOutput.set(boxes[numberOfBoxes - 1], 0)
         }
       }
     } else {
-      boxOutput[boxes[j]]--;
-      j++;
-      boxOutput[boxes[j]]++;
+      boxOutput.set(boxes[j], boxOutput.get(boxes[j]) - 1)
+      j++
+      boxOutput.set(boxes[j], boxOutput.get(boxes[j]) + 1)
     }
   }
 }
 
 export default {
   distinglishableBallInBoxes,
-  indistinglishableBallInBoxes,
-};
+  indistinglishableBallInBoxes
+}

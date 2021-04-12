@@ -725,6 +725,7 @@ describe("taxPayable both year", function() {
         rate: 'progressiveTax',
         tax: 18720
       },
+      taxThisYearFinal: 9070,
       taxThisYearProvisional: 500,
       rebate: 10000,
       taxPayable: 27790,
@@ -790,6 +791,7 @@ describe("taxPayable both year", function() {
         rate: 'stdRateTax',
         tax: 911100
       },
+      taxThisYearFinal: 901350,
       taxThisYearProvisional: 500,
       rebate: 10000,
       taxPayable: 1812450

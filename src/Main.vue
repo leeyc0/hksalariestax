@@ -1,0 +1,264 @@
+<template>
+<div id="version">
+根據 {{taxYear2}} 年度財政預算案制定<br/>
+<a href="https://github.com/leeyc0/hksalariestax/wiki">使用說明</a> <a href="https://github.com/leeyc0/hksalariestax/">Source code</a>
+</div>
+<div id="formLayout">
+  <div id="autocalculate" class="border">
+    自動分配免稅額專用選項
+    <table>
+      <tr><td>受供養健全兄弟姊妹總數</td><td><input type="number" v-model.number="totalSiblings" /></td></tr>
+      <tr><td>受供養健全兄弟姊妹總數<br>（{{taxYear2}}年度失去資格）</td><td><input type="number" v-model.number="totalSiblings18" /></td></tr>
+      <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" v-model.number="totalDisabledSiblings" /></td></tr>
+    </table>
+    <button type="button" @click="autocalculate">自動分配免稅額</button>
+  </div>
+  <div id="taxpayerform" class="border">
+    納稅人
+    <button type="button" @click="addTaxPayer">新增</button>
+    <button type="button" @click="computeTax(false)">全部計算</button>
+    <br/>
+    <div v-for="[i, taxPayer] of taxPayerMap" :key="i" class="taxPayerInput">
+      <div class="tag">
+        <input size="12" :value="taxPayer.name" @change="changeTaxPayerProp({ i, prop:'name', val:$event.target.value })" />
+      </div>
+      <div>
+        稅款 <input size="10" readonly :value="taxPayerResult.get(i) === undefined ? '0' : formatNumber(taxPayerResult.get(i).taxPayable)" />
+        <button type="button" @click="showTaxPayerModal(i)">填寫報稅表</button>
+        <button type="button" @click="deleteTaxPayer(i)">刪除</button><br/>
+        健全兄弟姊妹
+        <input :value="taxPayer.siblings" @change="changeTaxPayerProp({ i, prop:'siblings', val:parseInt($event.target.value) })" type="number" min="0" />
+        傷殘兄弟姊妹
+        <input :value="taxPayer.disabledSiblings" @change="changeTaxPayerProp({ i, prop:'disabledSiblings', val:parseInt($event.target.value) })" type="number" min="0" />
+        <br />
+        健全兄弟姊妹（{{$root.taxYear2}}年度年滿）
+        <input :value="taxPayer.siblings18" @change="changeTaxPayerProp({ i, prop:'siblings18', val:parseInt($event.target.value) })" type="number" min="0" />
+        <br />
+        父母免稅額
+        <div class="flex">
+          <div v-for="parent in parentsClaimedByTaxpayer.get(i)" :key="parent.id" class="parentTag">
+            {{parent.name}}
+          </div>
+          <div v-if="parentsClaimedByTaxpayer.get(i).length===0">
+            （無）
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="parentform" class="border">
+    受供養父母
+    <button type="button" @click="addParent">新增</button><br/>
+    <div v-for="[i, parent] of parentMap" :key="i" class="parentInput">
+      <div>
+        <input :value="parent.name" @change="changeParentProp({ i, prop:'name', val:$event.target.value })" />
+        <select @change="changeParentProp({ i, prop:'age', val:parseInt($event.target.value) })">
+          <option :value="0" v-bind:selected="parent.age === 0">傷殘——不論年齡</option>
+          <optgroup label="以下選項均非傷殘人士"/>
+          <option :value="1" v-bind:selected="parent.age === 1">於{{taxYear1}}年度滿54歲</option>
+          <option :value="2" v-bind:selected="parent.age === 2">於{{taxYear1}}年度滿55歲</option>
+          <option :value="3" v-bind:selected="parent.age === 3">於{{taxYear1}}年度滿59歲</option>
+          <option :value="4" v-bind:selected="parent.age === 4">於{{taxYear1}}年度滿60歲</option>
+        </select>
+        <button type="button" @click="deleteParent(i)">刪除</button><br/>
+      </div>
+      <div class="flex">
+        <div v-for="[taxPayerId, taxPayer] of taxPayerMap" :key="taxPayerId">
+          <label>
+            <input type="radio" :name="'parent'.concat(i)" :checked="parent.claimedBy === taxPayerId"
+              @change="setParentClaimedBy(i, taxPayerId)" /> {{taxPayer.name}}
+          </label>
+          <label>
+            <input type="checkbox" :checked="parent.livingTogether.get(taxPayerId)"
+              @change="setParentLivingTogether($event, i, taxPayerId)" /> 全年同住
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<taxpayer v-if="taxPayerMap.get(showTaxPayerIndex) !== undefined" :tax-payer="taxPayerMap.get(showTaxPayerIndex)"
+  :index="showTaxPayerIndex" @computeTax="computeTax(true)" @opened="taxpayerOpen" @before-close="taxpayerClose" />
+<taxresult v-if="taxPayerResult.get(showTaxPayerIndex) !== undefined" :tax-result="taxPayerResult.get(showTaxPayerIndex)"
+  :index="showTaxPayerIndex" @opened="taxresultOpen" @before-close="taxresultClose" />
+</template>
+
+<style>
+.modal-container {
+  display: flex;
+    align-items: flex-start;
+  overflow: auto;
+}
+
+.modal-content {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: 30px;
+  background-color: white;
+  padding: 16px;
+  border-radius: 4px;
+}
+
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+div.border {
+  border: 1px solid black;
+}
+</style>
+
+<style scoped>
+#formLayout {
+  display: grid;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  grid-template-columns: repeat(auto-fill, 450px);
+  max-width: 910px;
+}
+
+#version, #autocalculate, #taxpayerform, #parentform {
+  padding: 10px;
+}
+
+#autocalculate {
+  grid-column: 1/-1;
+}
+
+.taxPayerInput {
+  display: grid;
+  grid-column-gap: 10px;
+  grid-template-columns: 100px 320px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.parentInput {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.parentTag {
+  margin-right: 5px;
+}
+
+input[type=number] {
+  width: 3em;
+}
+</style>
+
+<script>
+import { mapState, mapGetters, mapMutations } from 'vuex'
+import taxrule from './taxrule.js'
+import { autocalculate } from './autocalculate.js'
+import taxpayer from './taxpayer.vue'
+import taxresult from './taxresult.vue'
+
+const numberFormatter = new Intl.NumberFormat()
+
+export default {
+  name: 'Main',
+  data: () => ({
+    taxYear1: '2020/21',
+    taxYear2: '2021/22',
+    showTaxPayerIndex: 1,
+    taxPayerResult: new Map(),
+    totalSiblings: 0,
+    totalSiblings18: 0,
+    totalDisabledSiblings: 0
+  }),
+  computed: {
+    ...mapState(['taxPayerMap', 'parentMap']),
+    ...mapGetters(['parentsClaimedByTaxpayer']),
+    taxpayerOpenKeydownListener: function (event) {
+      return (event) => {
+        if (event.key === 'Enter') {
+          this.computeTax(true)
+        }
+      }
+    },
+    taxresultOpenKeydownListener: function (event) {
+      return (event) => {
+        if (event.key === 'Backspace') {
+          this.$vfm.hide('taxResultModal')
+          this.$vfm.show('taxPayerModal')
+        }
+      }
+    }
+  },
+  components: {
+    taxpayer,
+    taxresult
+  },
+  created () {
+    this.computeTax(false)
+  },
+  methods: {
+    showTaxPayerModal (i) {
+      this.showTaxPayerIndex = i
+      this.$vfm.show('taxPayerModal')
+    },
+    disableModalMethod () {
+      this.showTaxPayerIndex = NaN
+    },
+    ...mapMutations(['addParent', 'deleteParent', 'changeTaxPayerProp', 'changeParentProp']),
+    addTaxPayer () {
+      this.$store.commit('addTaxPayer')
+      if (isNaN(this.showTaxPayerIndex)) {
+        this.showTaxPayerIndex = this.taxPayerMap.keys().next().value
+        this.computeTax(false)
+      }
+      this.computeTax(false)
+    },
+    deleteTaxPayer (i) {
+      this.$store.commit('deleteTaxPayer', i)
+      this.taxPayerResult.delete(i)
+      if (i === this.showTaxPayerIndex) {
+        const nextVal = this.taxPayerMap.keys().next()
+        if (nextVal.done) {
+          this.showTaxPayerIndex = NaN
+        } else {
+          this.computeTax(false)
+          this.showTaxPayerIndex = nextVal.value
+        }
+      }
+    },
+    computeTax (showModal) {
+      const parentsMapForTaxpayable = this.$store.getters.parentsClaimedByTaxpayer
+      for (const i of this.taxPayerMap.keys()) {
+        const taxResult = taxrule.taxPayable(this.taxPayerMap.get(i), parentsMapForTaxpayable.get(i))
+        this.taxPayerResult.set(i, taxResult)
+      }
+      if (showModal) {
+        this.$vfm.hide('taxPayerModal')
+        this.$vfm.show('taxResultModal')
+      }
+    },
+    setParentClaimedBy (parentId, taxPayerId) {
+      this.$store.commit('setParentClaimedBy', { parentId, taxPayerId })
+    },
+    setParentLivingTogether (event, parentId, taxPayerId) {
+      this.$store.commit('setParentLivingTogether', { parentId, taxPayerId, livingTogether: event.target.checked })
+    },
+    taxpayerOpen () {
+      const taxResultModal = this.$vfm.get('taxPayerModal')[0]
+      taxResultModal.vfmContainer._value.addEventListener('keydown', this.taxpayerOpenKeydownListener)
+    },
+    taxpayerClose () {
+      const taxResultModal = this.$vfm.get('taxPayerModal')[0]
+      taxResultModal.vfmContainer._value.removeEventListener('keydown', this.taxpayerOpenKeydownListener)
+    },
+    taxresultOpen () {
+      const taxResultModal = this.$vfm.get('taxResultModal')[0]
+      taxResultModal.vfmContainer._value.addEventListener('keydown', this.taxresultOpenKeydownListener)
+    },
+    taxresultClose () {
+      const taxResultModal = this.$vfm.get('taxResultModal')[0]
+      taxResultModal.vfmContainer._value.removeEventListener('keydown', this.taxresultOpenKeydownListener)
+    },
+    formatNumber: (num) => numberFormatter.format(num),
+    autocalculate
+  }
+}
+</script>

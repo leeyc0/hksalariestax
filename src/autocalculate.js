@@ -1,66 +1,75 @@
-"use strict";
+'use strict'
 
-import combinatorics from './combinatorics';
-import {computeTaxPerTaxPayer} from './taxpayerformstore';
+import combinatorics from './combinatorics.js'
+import taxrule from './taxrule.js'
 
-function autocalculate() {
-  let parentList = [];
-  let taxpayerList = [];
-  let state = this.$store.state;
-  let minimumState = null;
-  let minimumTax = Infinity;
+export function autocalculate () {
+  const parentList = []
+  const taxpayerList = []
+  const state = this.$store.state
+  let minimumState = null
+  let minimumTax = Infinity
 
-  for (let parentId of Object.keys(state.parents)) {
-    parentList.push(parentId);
+  for (const i of state.parentMap.keys()) {
+    parentList.push(i)
   }
 
-  for (let taxPayerId of Object.keys(state.taxpayers)) {
-    taxpayerList.push(taxPayerId);
+  for (const i of state.taxPayerMap.keys()) {
+    taxpayerList.push(i)
   }
 
-  for (let parentCombo of combinatorics.distinglishableBallInBoxes(parentList, taxpayerList)) {
-    for (let siblingCombo of combinatorics.indistinglishableBallInBoxes(state.totalSiblings, taxpayerList)) {
-      for (let sibling18Combo of combinatorics.indistinglishableBallInBoxes(state.totalSiblings18, taxpayerList)) {
-        for (let disabledSiblingCombo of combinatorics.indistinglishableBallInBoxes(state.totalDisabledSiblings, taxpayerList)) {
-          let totalTax = 0;
-          let tempState = Object.assign({}, state);
-          tempState.parents = Object.assign({}, tempState.parents);
-          tempState.taxpayers = Object.assign({}, tempState.taxpayers);
-          for (let parentId of Object.keys(tempState.parents)) {
-            tempState.parents[parentId] = Object.assign({}, tempState.parents[parentId]);
+  for (const parentCombo of combinatorics.distinglishableBallInBoxes(parentList, taxpayerList)) {
+    for (const siblingCombo of combinatorics.indistinglishableBallInBoxes(this.totalSiblings, taxpayerList)) {
+      for (const sibling18Combo of combinatorics.indistinglishableBallInBoxes(this.totalSiblings18, taxpayerList)) {
+        for (const disabledSiblingCombo of combinatorics.indistinglishableBallInBoxes(this.totalDisabledSiblings, taxpayerList)) {
+          var totalTax = 0
+          const tempState = Object.assign({}, state)
+          tempState.parentMap = new Map(state.parentMap)
+          tempState.taxPayerMap = new Map(state.taxPayerMap)
+          for (const [parentId, parent] of state.parentMap) {
+            tempState.parentMap.set(parentId, Object.assign({}, parent))
           }
-          for (let taxpayerId of Object.keys(tempState.taxpayers)) {
-            tempState.taxpayers[taxpayerId] = Object.assign({}, tempState.taxpayers[taxpayerId]);
-            for (let parentId of parentCombo[taxpayerId]) {
-              tempState.parents[parentId].claimedBy = taxpayerId;
+
+          const parentsMapForTaxpayable = new Map()
+          for (const taxpayerId of state.taxPayerMap.keys()) {
+            parentsMapForTaxpayable.set(taxpayerId, [])
+            for (const parentId of parentCombo.get(taxpayerId)) {
+              const parent = tempState.parentMap.get(parentId)
+              const parentsForTaxpayable = parentsMapForTaxpayable.get(taxpayerId)
+              parent.claimedBy = taxpayerId
+              parentsForTaxpayable.push({ id: parentId, name: parent.name, age: parent.age, livingTogether: parent.livingTogether.get(parent.claimedBy) })
+              parentsMapForTaxpayable.set(parent.claimedBy, parentsForTaxpayable)
             }
-            tempState.taxpayers[taxpayerId].siblings = siblingCombo[taxpayerId];
-            tempState.taxpayers[taxpayerId].siblings18 = sibling18Combo[taxpayerId];
-            tempState.taxpayers[taxpayerId].disabledSiblings = disabledSiblingCombo[taxpayerId];
           }
-          for (let taxpayerId of Object.keys(tempState.taxpayers)) {
-            let taxPayable = computeTaxPerTaxPayer(tempState, taxpayerId);
-            /* eslint no-console: "off" */
-            totalTax += taxPayable.taxPayable;
+
+          for (const [taxpayerId, taxPayer] of state.taxPayerMap) {
+            const taxPayerClone = Object.assign({}, taxPayer)
+            tempState.taxPayerMap.set(taxpayerId, taxPayerClone)
+
+            taxPayerClone.siblings = siblingCombo.get(taxpayerId)
+            taxPayerClone.siblings18 = sibling18Combo.get(taxpayerId)
+            taxPayerClone.disabledSiblings = disabledSiblingCombo.get(taxpayerId)
+
+            const taxPayable = taxrule.taxPayable(taxPayerClone, parentsMapForTaxpayable.get(taxpayerId))
+            totalTax += taxPayable.taxPayable
           }
           if (totalTax < minimumTax) {
-            minimumTax = totalTax;
-            minimumState = tempState;
+            minimumTax = totalTax
+            minimumState = tempState
           }
-          /* eslint no-console: "off" */
+
+          // eslint-disable-next-line no-console
           console.log({
             totalTax,
-            parentCombo: Object.assign({}, parentCombo),
-            siblingCombo: Object.assign({}, siblingCombo),
-            sibling18Combo: Object.assign({}, sibling18Combo),
-            disabledSiblingCombo: Object.assign({}, disabledSiblingCombo),
-          });
+            parentCombo: new Map(parentCombo),
+            siblingCombo: new Map(siblingCombo),
+            sibling18Combo: new Map(sibling18Combo),
+            disabledSiblingCombo: new Map(disabledSiblingCombo)
+          })
         }
       }
     }
   }
-  this.$store.replaceState(minimumState);
-  this.$store.dispatch('computeTax');
+  this.$store.replaceState(minimumState)
+  this.computeTax(false)
 }
-
-export {autocalculate};
