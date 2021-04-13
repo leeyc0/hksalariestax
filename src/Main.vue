@@ -127,9 +127,6 @@ div.border {
 }
 
 .taxPayerInput {
-  display: grid;
-  grid-column-gap: 10px;
-  grid-template-columns: 100px 320px;
   margin-top: 10px;
   margin-bottom: 10px;
 }
