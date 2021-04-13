@@ -1,4 +1,4 @@
-> 0.1% and not ie 11
+> 0.1% in hk and not ie 11 and not safari>=0 and not edge>=0 and not ios_saf>=0 and not samsung>=0 and not chrome>=0 and not firefox>=0 and not android<=4.4.4
 last 2 versions
 safari >= 12
 edge 16-18
