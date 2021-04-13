@@ -19,10 +19,8 @@
     <button type="button" @click="computeTax(false)">全部計算</button>
     <br/>
     <div v-for="[i, taxPayer] of taxPayerMap" :key="i" class="taxPayerInput">
-      <div class="tag">
-        <input size="12" :value="taxPayer.name" @change="changeTaxPayerProp({ i, prop:'name', val:$event.target.value })" />
-      </div>
       <div>
+        <input size="12" :value="taxPayer.name" @change="changeTaxPayerProp({ i, prop:'name', val:$event.target.value })" /><br />
         稅款 <input size="10" readonly :value="taxPayerResult.get(i) === undefined ? '0' : formatNumber(taxPayerResult.get(i).taxPayable)" />
         <button type="button" @click="showTaxPayerModal(i)">填寫報稅表</button>
         <button type="button" @click="deleteTaxPayer(i)">刪除</button><br/>
