@@ -1,5 +1,8 @@
-> 1%
+> 0.1% and not ie 11
 last 2 versions
-not dead
-ios_saf 12.2
+safari >= 12
+edge 16-18
 firefox esr
+ios_saf >= 12
+samsung >= 6.2
+not dead and not ie 11
