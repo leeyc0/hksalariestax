@@ -1,8 +1,9 @@
-> 0.1% in hk and not ie 11 and not safari>=0 and not edge>=0 and not ios_saf>=0 and not samsung>=0 and not chrome>=0 and not firefox>=0 and not android<=4.4.4
 last 2 versions
-safari >= 12
-edge 16-18
-firefox esr
-ios_saf >= 12
-samsung >= 6.2
+safari >= 10.1
+edge >=16
+firefox >= 52
+chrome >= 57
+ios_saf >= 10.3
+samsung >= 7.2
+opera >= 44
 not dead and not ie 11
