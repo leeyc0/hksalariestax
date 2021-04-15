@@ -71,5 +71,5 @@ export function autocalculate () {
     }
   }
   this.$store.replaceState(minimumState)
-  this.computeTax(false)
+  this.computeTax()
 }

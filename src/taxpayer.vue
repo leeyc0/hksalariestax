@@ -84,7 +84,7 @@
         <td><input v-model.lazy.number="otherDisabledDependants" type="number" min="0" /></td>
       </tr>
     </table>
-    <button type="button" @click="$emit('computeTax')">計算稅款</button>
+    <button type="button" @click="$emit('showTaxResult')">計算稅款</button>
     <button type="button" @click="disableModalMethod()">關閉</button>
   </div>
 </vue-final-modal>
@@ -127,7 +127,7 @@ export default {
     show: false
   }),
   emits: [
-    'computeTax'
+    'showTaxResult'
   ],
   computed: {
     name: {

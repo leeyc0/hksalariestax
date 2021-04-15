@@ -16,7 +16,7 @@
   <div id="taxpayerform" class="border">
     納稅人
     <button type="button" @click="addTaxPayer">新增</button>
-    <button type="button" @click="computeTax(false)">全部計算</button>
+    <button type="button" @click="computeTax()">全部計算</button>
     <br/>
     <div v-for="[i, taxPayer] of taxPayerMap" :key="i" class="taxPayerInput">
       <div>
@@ -76,7 +76,7 @@
   </div>
 </div>
 <taxpayer v-if="taxPayerMap.get(showTaxPayerIndex) !== undefined" :tax-payer="taxPayerMap.get(showTaxPayerIndex)"
-  :index="showTaxPayerIndex" @computeTax="computeTax(true)" @opened="taxpayerOpen" @before-close="taxpayerClose" />
+  :index="showTaxPayerIndex" @showTaxResult="showTaxResult" @opened="taxpayerOpen" @before-close="taxpayerClose" />
 <taxresult v-if="taxPayerResult.get(showTaxPayerIndex) !== undefined" :tax-result="taxPayerResult.get(showTaxPayerIndex)"
   :index="showTaxPayerIndex" @opened="taxresultOpen" @before-close="taxresultClose" />
 </template>
@@ -169,7 +169,7 @@ export default {
     taxpayerOpenKeydownListener: function (event) {
       return (event) => {
         if (event.key === 'Enter') {
-          this.computeTax(true)
+          this.showTaxResult()
         }
       }
     },
@@ -187,7 +187,7 @@ export default {
     taxresult
   },
   created () {
-    this.computeTax(false)
+    this.computeTax()
   },
   methods: {
     showTaxPayerModal (i) {
@@ -202,9 +202,9 @@ export default {
       this.$store.commit('addTaxPayer')
       if (isNaN(this.showTaxPayerIndex)) {
         this.showTaxPayerIndex = this.taxPayerMap.keys().next().value
-        this.computeTax(false)
+        this.computeTax()
       }
-      this.computeTax(false)
+      this.computeTax()
     },
     deleteTaxPayer (i) {
       this.$store.commit('deleteTaxPayer', i)
@@ -214,21 +214,22 @@ export default {
         if (nextVal.done) {
           this.showTaxPayerIndex = NaN
         } else {
-          this.computeTax(false)
+          this.computeTax()
           this.showTaxPayerIndex = nextVal.value
         }
       }
     },
-    computeTax (showModal) {
+    computeTax () {
       const parentsMapForTaxpayable = this.$store.getters.parentsClaimedByTaxpayer
       for (const i of this.taxPayerMap.keys()) {
         const taxResult = taxrule.taxPayable(this.taxPayerMap.get(i), parentsMapForTaxpayable.get(i))
         this.taxPayerResult.set(i, taxResult)
       }
-      if (showModal) {
-        this.$vfm.hide('taxPayerModal')
-        this.$vfm.show('taxResultModal')
-      }
+    },
+    showTaxResult () {
+      this.computeTax()
+      this.$vfm.hide('taxPayerModal')
+      this.$vfm.show('taxResultModal')
     },
     setParentClaimedBy (parentId, taxPayerId) {
       this.$store.commit('setParentClaimedBy', { parentId, taxPayerId })
