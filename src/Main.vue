@@ -75,9 +75,9 @@
     </div>
   </div>
 </div>
-<taxpayer v-if="taxPayerMap.get(showTaxPayerIndex) !== undefined" :tax-payer="taxPayerMap.get(showTaxPayerIndex)"
+<taxpayer ref="taxpayer" v-if="taxPayerMap.get(showTaxPayerIndex) !== undefined" :tax-payer="taxPayerMap.get(showTaxPayerIndex)"
   :index="showTaxPayerIndex" @showTaxResult="showTaxResult" @opened="taxpayerOpen" @before-close="taxpayerClose" />
-<taxresult v-if="taxPayerResult.get(showTaxPayerIndex) !== undefined" :tax-result="taxPayerResult.get(showTaxPayerIndex)"
+<taxresult ref="taxresult" v-if="taxPayerResult.get(showTaxPayerIndex) !== undefined" :tax-result="taxPayerResult.get(showTaxPayerIndex)"
   :index="showTaxPayerIndex" @opened="taxresultOpen" @before-close="taxresultClose" />
 </template>
 
@@ -238,20 +238,16 @@ export default {
       this.$store.commit('setParentLivingTogether', { parentId, taxPayerId, livingTogether: event.target.checked })
     },
     taxpayerOpen () {
-      const taxResultModal = this.$vfm.get('taxPayerModal')[0]
-      taxResultModal.vfmContainer._value.addEventListener('keydown', this.taxpayerOpenKeydownListener)
+      this.$refs.taxpayer.$el.addEventListener('keydown', this.taxpayerOpenKeydownListener)
     },
     taxpayerClose () {
-      const taxResultModal = this.$vfm.get('taxPayerModal')[0]
-      taxResultModal.vfmContainer._value.removeEventListener('keydown', this.taxpayerOpenKeydownListener)
+      this.$refs.taxpayer.$el.removeEventListener('keydown', this.taxpayerOpenKeydownListener)
     },
     taxresultOpen () {
-      const taxResultModal = this.$vfm.get('taxResultModal')[0]
-      taxResultModal.vfmContainer._value.addEventListener('keydown', this.taxresultOpenKeydownListener)
+      this.$refs.taxresult.$el.addEventListener('keydown', this.taxresultOpenKeydownListener)
     },
     taxresultClose () {
-      const taxResultModal = this.$vfm.get('taxResultModal')[0]
-      taxResultModal.vfmContainer._value.removeEventListener('keydown', this.taxresultOpenKeydownListener)
+      this.$refs.taxresult.$el.removeEventListener('keydown', this.taxresultOpenKeydownListener)
     },
     formatNumber: (num) => numberFormatter.format(num),
     autocalculate
