@@ -165,22 +165,7 @@ export default {
   }),
   computed: {
     ...mapState(['taxPayerMap', 'parentMap']),
-    ...mapGetters(['parentsClaimedByTaxpayer']),
-    taxpayerOpenKeydownListener: function (event) {
-      return (event) => {
-        if (event.key === 'Enter') {
-          this.showTaxResult()
-        }
-      }
-    },
-    taxresultOpenKeydownListener: function (event) {
-      return (event) => {
-        if (event.key === 'Backspace') {
-          this.$vfm.hide('taxResultModal')
-          this.$vfm.show('taxPayerModal')
-        }
-      }
-    }
+    ...mapGetters(['parentsClaimedByTaxpayer'])
   },
   components: {
     taxpayer,
@@ -236,6 +221,17 @@ export default {
     },
     setParentLivingTogether (event, parentId, taxPayerId) {
       this.$store.commit('setParentLivingTogether', { parentId, taxPayerId, livingTogether: event.target.checked })
+    },
+    taxpayerOpenKeydownListener (event) {
+      if (event.key === 'Enter') {
+        this.showTaxResult()
+      }
+    },
+    taxresultOpenKeydownListener (event) {
+      if (event.key === 'Backspace') {
+        this.$vfm.hide('taxResultModal')
+        this.$vfm.show('taxPayerModal')
+      }
     },
     taxpayerOpen () {
       this.$refs.taxpayer.$el.addEventListener('keydown', this.taxpayerOpenKeydownListener)
