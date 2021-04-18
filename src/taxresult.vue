@@ -69,6 +69,10 @@
           <td colspan="2">&nbsp;</td>
         </tr>
         <tr>
+          <th>按累進稅率計算之稅款：</th>
+          <th>{{formatNumber(taxResult.taxThisYear.progressiveTax)}}</th>
+        </tr>
+        <tr>
           <th colspan="2">標準稅率</th>
         </tr>
         <tr>
@@ -88,8 +92,8 @@
           <td>{{formatNumber(taxResult.taxThisYear.taxableIncomeStdRate)}}</td>
         </tr>
         <tr>
-          <td>標準稅率稅款計算：全數@{{taxResult.taxThisYear.stdRate}}%</td>
-          <td>{{formatNumber(taxResult.taxThisYear.stdRateTax)}}</td>
+          <th>按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxThisYear.stdRate}}%</th>
+          <th>{{formatNumber(taxResult.taxThisYear.stdRateTax)}}</th>
         </tr>
         <tr>
           <th colspan="2">{{$root.taxYear1}}年度最終稅款</th>
@@ -179,6 +183,10 @@
           <td colspan="2">&nbsp;</td>
         </tr>
         <tr>
+          <th>按累進稅率計算之稅款：</th>
+          <th>{{formatNumber(taxResult.taxNextYearProvisional.progressiveTax)}}</th>
+        </tr>
+        <tr>
           <th colspan="2">標準稅率</th>
         </tr>
         <tr>
@@ -198,8 +206,8 @@
           <td>{{formatNumber(taxResult.taxNextYearProvisional.taxableIncomeStdRate)}}</td>
         </tr>
         <tr>
-          <td>標準稅率稅款計算：全數@{{taxResult.taxNextYearProvisional.stdRate}}%</td>
-          <td>{{formatNumber(taxResult.taxNextYearProvisional.stdRateTax)}}</td>
+          <th>按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxNextYearProvisional.stdRate}}%</th>
+          <th>{{formatNumber(taxResult.taxNextYearProvisional.stdRateTax)}}</th>
         </tr>
         <tr>
           <th colspan="2">{{$root.taxYear1}}年度暫繳稅</th>
