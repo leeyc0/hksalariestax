@@ -1,4 +1,5 @@
 <template>
+<h1>薪俸稅計算機</h1>
 <div id="version">
 根據 {{taxYear2}} 年度財政預算案制定<br/>
 <a href="https://github.com/leeyc0/hksalariestax/wiki">使用說明</a> <a href="https://github.com/leeyc0/hksalariestax/">Source code</a>
@@ -116,7 +117,15 @@ div.border {
   max-width: 910px;
 }
 
-#version, #autocalculate, #taxpayerform, #parentform {
+h1 {
+  line-height: 0.5em;
+}
+
+#version {
+  padding-bottom: 10px;
+}
+
+#autocalculate, #taxpayerform, #parentform {
   padding: 10px;
 }
 
