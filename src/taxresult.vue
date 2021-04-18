@@ -255,8 +255,12 @@
   grid-template-columns: repeat(auto-fill, 350px);
 }
 
-table {
+.taxResult th:nth-child(1), .taxResult td:nth-child(1) {
   text-align: left;
+}
+
+.taxResult th:nth-child(2), .taxResult td:nth-child(2) {
+  text-align: right;
 }
 
 .taxResult, .taxPayable {
