@@ -68,11 +68,11 @@
         <tr v-for="i in progressiveThisYearExtraLines" :key="i">
           <td colspan="2">&nbsp;</td>
         </tr>
-        <tr>
+        <tr class="beforeline">
           <th>按累進稅率計算之稅款：</th>
           <th>{{formatNumber(taxResult.taxThisYear.progressiveTax)}}</th>
         </tr>
-        <tr>
+        <tr class="line">
           <th colspan="2">標準稅率</th>
         </tr>
         <tr>
@@ -91,11 +91,11 @@
           <td>應課稅入息</td>
           <td>{{formatNumber(taxResult.taxThisYear.taxableIncomeStdRate)}}</td>
         </tr>
-        <tr>
+        <tr class="beforeline">
           <th>按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxThisYear.stdRate}}%</th>
           <th>{{formatNumber(taxResult.taxThisYear.stdRateTax)}}</th>
         </tr>
-        <tr>
+        <tr class="line">
           <th colspan="2">{{$root.taxYear1}}年度最終稅款</th>
         </tr>
         <tr>
@@ -182,11 +182,11 @@
         <tr v-for="i in progressiveNextYearExtraLines" :key="i">
           <td colspan="2">&nbsp;</td>
         </tr>
-        <tr>
+        <tr class="beforeline">
           <th>按累進稅率計算之稅款：</th>
           <th>{{formatNumber(taxResult.taxNextYearProvisional.progressiveTax)}}</th>
         </tr>
-        <tr>
+        <tr class="line">
           <th colspan="2">標準稅率</th>
         </tr>
         <tr>
@@ -205,11 +205,11 @@
           <td>應課稅入息</td>
           <td>{{formatNumber(taxResult.taxNextYearProvisional.taxableIncomeStdRate)}}</td>
         </tr>
-        <tr>
+        <tr class="beforeline">
           <th>按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxNextYearProvisional.stdRate}}%</th>
           <th>{{formatNumber(taxResult.taxNextYearProvisional.stdRateTax)}}</th>
         </tr>
-        <tr>
+        <tr class="line">
           <th colspan="2">{{$root.taxYear1}}年度暫繳稅</th>
         </tr>
         <tr>
@@ -250,6 +250,21 @@
 </style>
 
 <style scoped>
+table {
+  border-collapse: collapse;
+}
+
+tr.beforeline {
+  padding-bottom: 5px;
+  display: block;
+}
+
+tr.line {
+  border-top: 1px solid black;
+  padding-top: 5px;
+  display: block;
+}
+
 .taxResultRoot {
   display: grid;
   grid-template-columns: repeat(auto-fill, 350px);
