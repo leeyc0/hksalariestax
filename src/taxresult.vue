@@ -68,12 +68,12 @@
         <tr v-for="i in progressiveThisYearExtraLines" :key="i">
           <td colspan="2">&nbsp;</td>
         </tr>
-        <tr class="beforeline">
-          <th>按累進稅率計算之稅款：</th>
-          <th>{{formatNumber(taxResult.taxThisYear.progressiveTax)}}</th>
+        <tr>
+          <th class="beforeline">按累進稅率計算之稅款：</th>
+          <th class="beforeline">{{formatNumber(taxResult.taxThisYear.progressiveTax)}}</th>
         </tr>
-        <tr class="line">
-          <th colspan="2">標準稅率</th>
+        <tr>
+          <th colspan="2" class="line">標準稅率</th>
         </tr>
         <tr>
           <td>總入息</td>
@@ -91,12 +91,12 @@
           <td>應課稅入息</td>
           <td>{{formatNumber(taxResult.taxThisYear.taxableIncomeStdRate)}}</td>
         </tr>
-        <tr class="beforeline">
-          <th>按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxThisYear.stdRate}}%</th>
-          <th>{{formatNumber(taxResult.taxThisYear.stdRateTax)}}</th>
+        <tr>
+          <th class="beforeline">按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxThisYear.stdRate}}%</th>
+          <th class="beforeline">{{formatNumber(taxResult.taxThisYear.stdRateTax)}}</th>
         </tr>
-        <tr class="line">
-          <th colspan="2">{{$root.taxYear1}}年度最終稅款</th>
+        <tr>
+          <th colspan="2" class="line">{{$root.taxYear1}}年度最終稅款</th>
         </tr>
         <tr>
           <td>適用稅率：{{taxResult.taxThisYear.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td>
@@ -182,12 +182,12 @@
         <tr v-for="i in progressiveNextYearExtraLines" :key="i">
           <td colspan="2">&nbsp;</td>
         </tr>
-        <tr class="beforeline">
-          <th>按累進稅率計算之稅款：</th>
-          <th>{{formatNumber(taxResult.taxNextYearProvisional.progressiveTax)}}</th>
+        <tr>
+          <th class="beforeline">按累進稅率計算之稅款：</th>
+          <th class="beforeline">{{formatNumber(taxResult.taxNextYearProvisional.progressiveTax)}}</th>
         </tr>
-        <tr class="line">
-          <th colspan="2">標準稅率</th>
+        <tr>
+          <th colspan="2" class="line">標準稅率</th>
         </tr>
         <tr>
           <td>總入息</td>
@@ -205,12 +205,12 @@
           <td>應課稅入息</td>
           <td>{{formatNumber(taxResult.taxNextYearProvisional.taxableIncomeStdRate)}}</td>
         </tr>
-        <tr class="beforeline">
-          <th>按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxNextYearProvisional.stdRate}}%</th>
-          <th>{{formatNumber(taxResult.taxNextYearProvisional.stdRateTax)}}</th>
+        <tr>
+          <th class="beforeline">按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxNextYearProvisional.stdRate}}%</th>
+          <th class="beforeline">{{formatNumber(taxResult.taxNextYearProvisional.stdRateTax)}}</th>
         </tr>
-        <tr class="line">
-          <th colspan="2">{{$root.taxYear1}}年度暫繳稅</th>
+        <tr>
+          <th colspan="2" class="line">{{$root.taxYear1}}年度暫繳稅</th>
         </tr>
         <tr>
           <td>適用稅率：{{taxResult.taxNextYearProvisional.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td>
@@ -254,15 +254,13 @@ table {
   border-collapse: collapse;
 }
 
-tr.beforeline {
+.beforeline {
   padding-bottom: 5px;
-  display: block;
 }
 
-tr.line {
+.line {
   border-top: 1px solid black;
   padding-top: 5px;
-  display: block;
 }
 
 .taxResultRoot {
