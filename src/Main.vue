@@ -233,6 +233,7 @@ export default {
     },
     taxpayerOpenKeydownListener (event) {
       if (event.key === 'Enter') {
+        document.activeElement.dispatchEvent(new Event('change'))
         this.showTaxResult()
       }
     },
