@@ -164,8 +164,8 @@ const numberFormatter = new Intl.NumberFormat()
 export default {
   name: 'Main',
   data: () => ({
-    taxYear1: '2022/23',
-    taxYear2: '2023/24',
+    taxYear1: '2023/24',
+    taxYear2: '2024/25',
     showTaxPayerIndex: 1,
     taxPayerResult: new Map(),
     totalSiblings: 0,
