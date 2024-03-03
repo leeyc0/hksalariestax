@@ -13,7 +13,14 @@ class TaxRule {
         {step:45000, rate:12},    // next $45000 at 12%
         {step:Infinity, rate:17}  // remainder at 17%
       ];
-    stdRate:                     Standard Rate in percent (float)
+    stdRate:                     Array of {step,rate}
+      step:                        current rate step (int), the last step must be Infinity
+      rate:                        current rate in percent (float)
+      Example:
+      [
+        {step:5000000, rate:15},     // first $5000000 at 15%
+        {step:Infinity, rate:16},    // remainder at 16%
+      ];
     basicAllowance:              Basic Allowance
     mpfMax:                      Maximum MPF mandatory payment
     mpfMaxMultiplier:            Maximum MPF mandatory payment multiplier (mpfMaxNextYear/mpfMax), used when mpfMax increases
@@ -274,7 +281,23 @@ class TaxRule {
     }
 
     // standard rate - no allowances
-    const stdRateTax = Math.floor(taxableIncomeStdRate * this.stdRate / 100)
+    stepTotal = 0
+    let stdRateTax = 0
+    const stdRateTaxBreakdown = []
+    for (const i of this.stdRate) {
+      if (taxableIncomeStdRate < stepTotal + i.step) {
+        const remainder = taxableIncomeStdRate - stepTotal
+        const stepTax = Math.floor(remainder * i.rate / 100)
+        stdRateTaxBreakdown.push({ step: remainder, rate: i.rate, tax: stepTax })
+        stdRateTax += stepTax
+        break
+      } else {
+        stepTotal += i.step
+        const stepTax = i.step * i.rate / 100
+        stdRateTaxBreakdown.push({ step: i.step, rate: i.rate, tax: stepTax })
+        stdRateTax += stepTax
+      }
+    }
 
     const taxResult = {
       income: taxpayer.income,
@@ -292,7 +315,7 @@ class TaxRule {
       disabledDependentAllowance,
       progressiveTaxBreakdown,
       progressiveTax,
-      stdRate: this.stdRate,
+      stdRateTaxBreakdown,
       stdRateTax
     }
     if (progressiveTax <= stdRateTax) {
@@ -331,7 +354,9 @@ function taxPayable (taxpayer, parents) {
       { step: 50000, rate: 14 },
       { step: Infinity, rate: 17 }
     ],
-    stdRate: 15,
+    stdRate: [
+      { step: Infinity, rate: 15 }
+    ],
     basicAllowance: 132000,
     marriedAllowance: 264000,
     mpfMax: 18000,
@@ -357,7 +382,10 @@ function taxPayable (taxpayer, parents) {
       { step: 50000, rate: 14 },
       { step: Infinity, rate: 17 }
     ],
-    stdRate: 15,
+    stdRate: [
+      { step: 5000000, rate: 15 },
+      { step: Infinity, rate: 16 }
+    ],
     basicAllowance: 132000,
     marriedAllowance: 264000,
     mpfMax: 18000,

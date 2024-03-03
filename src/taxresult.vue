@@ -92,7 +92,17 @@
           <td>{{formatNumber(taxResult.taxThisYear.taxableIncomeStdRate)}}</td>
         </tr>
         <tr>
-          <th class="beforeline">按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxThisYear.stdRate}}%</th>
+          <th colspan="2">標準稅率稅款計算</th>
+        </tr>
+        <tr v-for="(tax,index) in taxResult.taxThisYear.stdRateTaxBreakdown" :key="index">
+          <td>{{progressiveTaxPrefix(index,taxResult.taxThisYear.stdRateTaxBreakdown)+formatNumber(tax.step)}}@{{tax.rate+"%"}}</td>
+          <td>{{formatNumber(tax.tax)}}</td>
+        </tr>
+        <tr v-for="i in stdRateThisYearExtraLines" :key="i">
+          <td colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+          <th class="beforeline">按標準稅率計算之稅款：</th>
           <th class="beforeline">{{formatNumber(taxResult.taxThisYear.stdRateTax)}}</th>
         </tr>
         <tr>
@@ -206,7 +216,17 @@
           <td>{{formatNumber(taxResult.taxNextYearProvisional.taxableIncomeStdRate)}}</td>
         </tr>
         <tr>
-          <th class="beforeline">按標準稅率稅款計算之稅款：<br>全數@{{taxResult.taxNextYearProvisional.stdRate}}%</th>
+          <th colspan="2">標準稅率稅款計算</th>
+        </tr>
+        <tr v-for="(tax,index) in taxResult.taxNextYearProvisional.stdRateTaxBreakdown" :key="index">
+          <td>{{progressiveTaxPrefix(index,taxResult.taxNextYearProvisional.stdRateTaxBreakdown)+formatNumber(tax.step)}}@{{tax.rate+"%"}}</td>
+          <td>{{formatNumber(tax.tax)}}</td>
+        </tr>
+        <tr v-for="i in stdRateNextYearExtraLines" :key="i">
+          <td colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+          <th class="beforeline">按標準稅率計算之稅款：</th>
           <th class="beforeline">{{formatNumber(taxResult.taxNextYearProvisional.stdRateTax)}}</th>
         </tr>
         <tr>
@@ -305,6 +325,14 @@ export default {
     },
     progressiveNextYearExtraLines () {
       const lines = this.taxResult.taxThisYear.progressiveTaxBreakdown.length - this.taxResult.taxNextYearProvisional.progressiveTaxBreakdown.length
+      return lines < 0 ? 0 : lines
+    },
+    stdRateThisYearExtraLines () {
+      const lines = this.taxResult.taxNextYearProvisional.stdRateTaxBreakdown.length - this.taxResult.taxThisYear.stdRateTaxBreakdown.length
+      return lines < 0 ? 0 : lines
+    },
+    stdRateNextYearExtraLines () {
+      const lines = this.taxResult.taxThisYear.stdRateTaxBreakdown.length - this.taxResult.taxNextYearProvisional.stdRateTaxBreakdown.length
       return lines < 0 ? 0 : lines
     }
   },

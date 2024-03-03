@@ -6,14 +6,17 @@ var taxRebate = TaxRuleModule["taxRebate"];
 var taxPayable = TaxRuleModule["taxPayable"];
 var assert = require('assert');
 
-var taxRule2017 = new TaxRule({
+var taxRuleTest = new TaxRule({
   progressiveRate: [
     {step: 45000, rate: 2},
     {step: 45000, rate: 7},
     {step: 45000, rate: 12},
     {step: Infinity, rate: 17},
   ],
-  stdRate: 15,
+  stdRate: [
+    {step: 5000000, rate: 15},
+    {step: Infinity, rate: 16},
+  ],
   basicAllowance: 132000,
   marriedAllowance: 264000,
   mpfMax: 18000,
@@ -39,7 +42,10 @@ var taxRuleDummy = new TaxRule({
     {step:50000, rate:14},
     {step:Infinity, rate:17}
   ],
-  stdRate: 15,
+  stdRate: [
+    {step: 5000000, rate: 15},
+    {step: Infinity, rate: 16},
+  ],
   basicAllowance: 132000,
   marriedAllowance: 264000,
   mpfMax: 18000,
@@ -92,7 +98,7 @@ var expectedResultTemplate = {
   disabledDependentAllowance: 0,
   progressiveTaxBreakdown: [],
   progressiveTax: 0,
-  stdRate: 0,
+  stdRateTaxBreakdown: [],
   stdRateTax: 0,
 };
 
@@ -100,12 +106,12 @@ describe('calculateMpfDeduction', function() {
   it('should return same amount as input when multiplier=1 and input<=cap', function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     taxpayer.mpf = 15000;
-    assert.equal(taxRule2017.calculateMpfDeduction(taxpayer), 15000);
+    assert.equal(taxRuleTest.calculateMpfDeduction(taxpayer), 15000);
   });
   it('should return capped amount as input when multiplier=1 and input>cap', function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     taxpayer.mpf = 20000;
-    assert.equal(taxRule2017.calculateMpfDeduction(taxpayer), 18000);
+    assert.equal(taxRuleTest.calculateMpfDeduction(taxpayer), 18000);
   });
   it('should return input*multiplier when multiplier>1 and input<=cap', function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
@@ -135,7 +141,7 @@ describe("calculateParentAllowance", function() {
   
   for (let parentObj of parents) {
     it("should calculate correct amount for case id: "+parentObj.id, function() {
-      assert.equal(taxRule2017.calculateParentAllowance([parentObj]), parentObj.allowance2017, "taxRule2017");
+      assert.equal(taxRuleTest.calculateParentAllowance([parentObj]), parentObj.allowance2017, "taxRule2017");
       assert.equal(taxRuleDummy.calculateParentAllowance([parentObj]), parentObj.allowanceDummy, "taxRuleDummy");
     });
   }
@@ -147,7 +153,7 @@ describe("calculateSiblingAllowance", function() {
     taxpayer.siblings = 1;
     taxpayer.siblings18 = 2;
     taxpayer.disabledSiblings = 3,
-    assert.equal(taxRule2017.calculateSiblingAllowance(taxpayer), 225000);
+    assert.equal(taxRuleTest.calculateSiblingAllowance(taxpayer), 225000);
   });
   it("should calculate correct amount: next year", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
@@ -165,7 +171,7 @@ describe("calculateChildAllowanceAndSingleParentAllowance", function() {
     taxpayer.newbornChildrenThisYear = 1;
     taxpayer.newbornChildrenNextYear = 3;
     taxpayer.children18 = 1;
-    assert.deepStrictEqual(taxRule2017.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 500000, singleParentAllowance: 0}); 
+    assert.deepStrictEqual(taxRuleTest.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 500000, singleParentAllowance: 0}); 
   });
   it("should calculate correct amount: next year", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
@@ -194,7 +200,7 @@ describe("calculateChildAllowanceAndSingleParentAllowance", function() {
     taxpayer.newbornChildrenThisYear = 0;
     taxpayer.newbornChildrenNextYear = 0;
     taxpayer.children18 = 0;
-    assert.deepStrictEqual(taxRule2017.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 100000, singleParentAllowance: 132000}, "previous year");
+    assert.deepStrictEqual(taxRuleTest.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 100000, singleParentAllowance: 132000}, "previous year");
     assert.deepStrictEqual(taxRuleDummy.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 100000, singleParentAllowance: 132000}, "next year");
   });
   it("test single parent allowance: single parent next year only", function() {
@@ -204,7 +210,7 @@ describe("calculateChildAllowanceAndSingleParentAllowance", function() {
     taxpayer.newbornChildrenThisYear = 0;
     taxpayer.newbornChildrenNextYear = 0;
     taxpayer.children18 = 0;
-    assert.deepStrictEqual(taxRule2017.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 100000, singleParentAllowance: 0}, "previous year");
+    assert.deepStrictEqual(taxRuleTest.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 100000, singleParentAllowance: 0}, "previous year");
     assert.deepStrictEqual(taxRuleDummy.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 100000, singleParentAllowance: 132000}, "next year");
   });
 });
@@ -240,11 +246,17 @@ describe("calculateTax", function() {
     expectedResult.basicAllowance = 132000;
     expectedResult.progressiveTaxBreakdown = [{step: 100, rate: 2, tax: 2}];
     expectedResult.progressiveTax = 2;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 132100,
+        tax: 19815
+      }
+    ];
     expectedResult.stdRateTax = 19815;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 2;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, []), expectedResult);
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, []), expectedResult);
   });
   
   it("Tax 2017 test married allowance", function() {
@@ -258,11 +270,17 @@ describe("calculateTax", function() {
     expectedResult.marriedAllowance = 264000;
     expectedResult.progressiveTaxBreakdown = [{step: 200, rate: 2, tax: 4}];
     expectedResult.progressiveTax = 4;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 264200,
+        tax: 39630
+      }
+    ];
     expectedResult.stdRateTax = 39630;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 4;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, []), expectedResult);
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, []), expectedResult);
   });
   
   it("Tax 2017 test single parent - no allowance, also tests child allowance", function() {
@@ -276,11 +294,17 @@ describe("calculateTax", function() {
     expectedResult.basicAllowance = 132000;
     expectedResult.progressiveTaxBreakdown = [{step: 300, rate: 2, tax: 6}];
     expectedResult.progressiveTax = 6;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 132300,
+        tax: 19845
+      }
+    ];
     expectedResult.stdRateTax = 19845;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 6;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, []), expectedResult);
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, []), expectedResult);
   });
   
   it("test single parent - allowance next year", function() {
@@ -300,11 +324,17 @@ describe("calculateTax", function() {
       {step: 42400, rate: 12, tax: 5088},
     ];
     expectedResult.progressiveTax = 9138;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 364400,
+        tax: 54660
+      }
+    ];
     expectedResult.stdRateTax = 54660;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 9138;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, []), expectedResult, "last year");
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, []), expectedResult, "last year");
     
     expectedResult.taxableIncome = 400;
     expectedResult.singleParentAllowance = 132000;
@@ -328,11 +358,17 @@ describe("calculateTax", function() {
     expectedResult.childAllowance = 100000;
     expectedResult.progressiveTaxBreakdown = [{step: 500, rate: 2, tax: 10}];
     expectedResult.progressiveTax = 10;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 364500,
+        tax: 54675
+      }
+    ];
     expectedResult.stdRateTax = 54675;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 10;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, []), expectedResult, "last year");
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, []), expectedResult, "last year");
     assert.deepStrictEqual(taxRuleDummy.calculateTax(taxpayer, []), expectedResult, "next year");
   });
   
@@ -348,7 +384,13 @@ describe("calculateTax", function() {
     expectedResult.personalDisabilityAllowance = 15000;
     expectedResult.progressiveTaxBreakdown = [{step: 600, rate: 2, tax: 12}];
     expectedResult.progressiveTax = 12;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 147600,
+        tax: 22140
+      }
+    ];
     expectedResult.stdRateTax = 22140;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 12;
@@ -384,11 +426,17 @@ describe("calculateTax", function() {
       {step: 3100, rate: 17, tax: 527},
     ];
     expectedResult.progressiveTax = 9977;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 834100,
+        tax: 125115
+      }
+    ];
     expectedResult.stdRateTax = 125115;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 9977;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, parents), expectedResult, "last year");
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, parents), expectedResult, "last year");
     
     expectedResult.taxableIncome = 100;
     expectedResult.parentAllowance = 552000;
@@ -413,11 +461,17 @@ describe("calculateTax", function() {
     expectedResult.siblingAllowance = 150000;
     expectedResult.progressiveTaxBreakdown = [{step: 200, rate: 2, tax: 4}];
     expectedResult.progressiveTax = 4;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 357200,
+        tax: 53580
+      }
+    ];
     expectedResult.stdRateTax = 53580;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 4;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, []), expectedResult, "last year");
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, []), expectedResult, "last year");
     expectedResult.taxableIncome = 37700;
     expectedResult.siblingAllowance = 112500;
     expectedResult.progressiveTaxBreakdown = [{step: 37700, rate: 2, tax: 754}];
@@ -438,11 +492,17 @@ describe("calculateTax", function() {
     expectedResult.disabledDependentAllowance = 150000;
     expectedResult.progressiveTaxBreakdown = [{step: 700, rate: 2, tax: 14}];
     expectedResult.progressiveTax = 14;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 282700,
+        tax: 42405
+      }
+    ];
     expectedResult.stdRateTax = 42405;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 14;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, []), expectedResult);
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, []), expectedResult);
   });
   
   it("test MPF deduction", function() {
@@ -457,16 +517,29 @@ describe("calculateTax", function() {
     expectedResult.basicAllowance = 132000;
     expectedResult.progressiveTaxBreakdown = [{step: 300, rate: 2, tax: 6}];
     expectedResult.progressiveTax = 6;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 132300,
+        tax: 19845
+      }
+    ];
     expectedResult.stdRateTax = 19845;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 6;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, []), expectedResult, "last year");
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, []), expectedResult, "last year");
     expectedResult.mpf = 300;
     expectedResult.taxableIncome = 200;
     expectedResult.taxableIncomeStdRate =  132200;
     expectedResult.progressiveTaxBreakdown = [{step: 200, rate: 2, tax: 4}];
     expectedResult.progressiveTax = 4;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 132200,
+        tax: 19830
+      }
+    ];
     expectedResult.stdRateTax = 19830;
     expectedResult.tax = 4;
     assert.deepStrictEqual(taxRuleDummy.calculateTax(taxpayer, []), expectedResult, "next year");
@@ -485,16 +558,29 @@ describe("calculateTax", function() {
     expectedResult.basicAllowance = 132000;
     expectedResult.progressiveTaxBreakdown = [{step: 100, rate: 2, tax: 2}];
     expectedResult.progressiveTax = 2;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 132100,
+        tax: 19815
+      }
+    ];
     expectedResult.stdRateTax = 19815;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = 2;
-    assert.deepStrictEqual(taxRule2017.calculateTax(taxpayer, []), expectedResult, "last year");
+    assert.deepStrictEqual(taxRuleTest.calculateTax(taxpayer, []), expectedResult, "last year");
     expectedResult.otherDeductions = 100;
     expectedResult.taxableIncome = 400;
     expectedResult.taxableIncomeStdRate =  132400;
     expectedResult.progressiveTaxBreakdown = [{step: 400, rate: 2, tax: 8}];
     expectedResult.progressiveTax = 8;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 132400,
+        tax: 19860
+      }
+    ];
     expectedResult.stdRateTax = 19860;
     expectedResult.tax = 8;
     assert.deepStrictEqual(taxRuleDummy.calculateTax(taxpayer, []), expectedResult, "next year");
@@ -514,11 +600,17 @@ describe("calculateTax", function() {
     expectedResult.basicAllowance = 132000;
     expectedResult.progressiveTaxBreakdown = [{step:0, rate:2, tax:0}];
     expectedResult.progressiveTax = 0;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 0,
+        tax: 0
+      }
+    ];
     expectedResult.stdRateTax = 0;
-    expectedResult.stdRate = 15;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = expectedResult.progressiveTax;
-    let actualResult = taxRule2017.calculateTax(taxpayer,[]);
+    let actualResult = taxRuleTest.calculateTax(taxpayer,[]);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
   
@@ -532,11 +624,17 @@ describe("calculateTax", function() {
     expectedResult.basicAllowance = 132000;
     expectedResult.progressiveTaxBreakdown = [{step:1000, rate: 2, tax:20}];
     expectedResult.progressiveTax = 20;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 133000,
+        tax: 19950
+      }
+    ];
     expectedResult.stdRateTax = 19950;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = expectedResult.progressiveTax;
-    let actualResult = taxRule2017.calculateTax(taxpayer,[]);
+    let actualResult = taxRuleTest.calculateTax(taxpayer,[]);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
   
@@ -553,11 +651,17 @@ describe("calculateTax", function() {
       {step:5000, rate: 7, tax:350},
     ];
     expectedResult.progressiveTax = 1250;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 182000,
+        tax: 27300
+      }
+    ];
     expectedResult.stdRateTax = 27300;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = expectedResult.progressiveTax;
-    let actualResult = taxRule2017.calculateTax(taxpayer,[]);
+    let actualResult = taxRuleTest.calculateTax(taxpayer,[]);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
   
@@ -575,11 +679,17 @@ describe("calculateTax", function() {
       {step:10000, rate: 12, tax:1200},
     ];
     expectedResult.progressiveTax = 5250;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 232000,
+        tax: 34800
+      }
+    ];
     expectedResult.stdRateTax = 34800;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = expectedResult.progressiveTax;
-    let actualResult = taxRule2017.calculateTax(taxpayer,[]);
+    let actualResult = taxRuleTest.calculateTax(taxpayer,[]);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
   
@@ -598,15 +708,21 @@ describe("calculateTax", function() {
       {step:140000, rate: 17, tax:23800},
     ];
     expectedResult.progressiveTax = 33250;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 407000,
+        tax: 61050
+      }
+    ];
     expectedResult.stdRateTax = 61050;
     expectedResult.rate = "progressiveTax";
     expectedResult.tax = expectedResult.progressiveTax;
-    let actualResult = taxRule2017.calculateTax(taxpayer,[]);
+    let actualResult = taxRuleTest.calculateTax(taxpayer,[]);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
   
-  it("Tax 2017 standard rate", function() {
+  it("Tax 2017 standard rate 15%", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     let expectedResult = Object.assign({}, expectedResultTemplate);
     taxpayer.income = 1800000;
@@ -621,11 +737,51 @@ describe("calculateTax", function() {
       {step:1533000, rate: 17, tax:260610},
     ];
     expectedResult.progressiveTax = 270060;
-    expectedResult.stdRate = 15;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 1800000,
+        tax: 270000
+      }
+    ];
     expectedResult.stdRateTax = 270000;
     expectedResult.rate = "stdRateTax";
     expectedResult.tax = expectedResult.stdRateTax;
-    let actualResult = taxRule2017.calculateTax(taxpayer,[]);
+    let actualResult = taxRuleTest.calculateTax(taxpayer,[]);
+    assert.deepStrictEqual(actualResult, expectedResult);
+  });
+
+  it("Tax 2017 standard rate 16%", function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    let expectedResult = Object.assign({}, expectedResultTemplate);
+    taxpayer.income = 5100000;
+    expectedResult.income = 5100000;
+    expectedResult.taxableIncome = 4968000;
+    expectedResult.taxableIncomeStdRate = 5100000;
+    expectedResult.basicAllowance = 132000;
+    expectedResult.progressiveTaxBreakdown = [
+      {step:45000, rate: 2, tax:900},
+      {step:45000, rate: 7, tax:3150},
+      {step:45000, rate: 12, tax:5400},
+      {step:4833000, rate: 17, tax:821610},
+    ];
+    expectedResult.progressiveTax = 831060;
+    expectedResult.stdRateTaxBreakdown = [
+      {
+        rate: 15,
+        step: 5000000,
+        tax: 750000
+      },
+      {
+        rate: 16,
+        step: 100000,
+        tax: 16000
+      }
+    ];
+    expectedResult.stdRateTax = 766000;
+    expectedResult.rate = "stdRateTax";
+    expectedResult.tax = expectedResult.stdRateTax;
+    let actualResult = taxRuleTest.calculateTax(taxpayer,[]);
     assert.deepStrictEqual(actualResult, expectedResult);
   });
 });
@@ -693,8 +849,14 @@ describe("taxPayable both year", function() {
           {"step":21000,"rate":17,"tax":3570}
         ],
         progressiveTax: 19570,
+        stdRateTaxBreakdown: [
+          {
+            rate: 15,
+            step: 803000,
+            tax: 120450
+          }
+        ],
         stdRateTax: 120450,
-        stdRate: 15,
         rate: 'progressiveTax',
         tax: 19570
       },
@@ -720,8 +882,14 @@ describe("taxPayable both year", function() {
           {"step":16000,"rate":17,"tax":2720}
         ],
         progressiveTax: 18720,
+        stdRateTaxBreakdown: [
+          {
+            rate: 15,
+            step: 798000,
+            tax: 119700
+          }
+        ],
         stdRateTax: 119700,
-        stdRate: 15,
         rate: 'progressiveTax',
         tax: 18720
       },
@@ -735,12 +903,12 @@ describe("taxPayable both year", function() {
   });
   
   it("standard rate both year", function() {
-    taxpayer.income = 6100000;
+    taxpayer.income = 7100000;
     let expectedResult = {
       taxThisYear: {
-        income: 6100000,
-        taxableIncome: 5497000,
-        taxableIncomeStdRate: 6079000,
+        income: 7100000,
+        taxableIncome: 6497000,
+        taxableIncomeStdRate: 7079000,
         mpf: 1000,
         otherDeductions: 20000,
         basicAllowance: 132000,
@@ -756,18 +924,24 @@ describe("taxPayable both year", function() {
           {"step":50000,"rate":6,"tax":3000},
           {"step":50000,"rate":10,"tax":5000},
           {"step":50000,"rate":14,"tax":7000},
-          {"step":5297000,"rate":17,"tax":900490}
+          {"step":6297000,"rate":17,"tax":1070490}
         ],
-        progressiveTax: 916490,
-        stdRateTax: 911850,
-        stdRate: 15,
+        progressiveTax: 1086490,
+        stdRateTaxBreakdown: [
+          {
+            rate: 15,
+            step: 7079000,
+            tax: 1061850
+          }
+        ],
+        stdRateTax: 1061850,
         rate: 'stdRateTax',
-        tax: 911850
+        tax: 1061850
       },
       taxNextYearProvisional: {
-        income: 6100000,
-        taxableIncome: 5492000,
-        taxableIncomeStdRate: 6074000,
+        income: 7100000,
+        taxableIncome: 6492000,
+        taxableIncomeStdRate: 7074000,
         mpf: 1000,
         otherDeductions: 25000,
         basicAllowance: 132000,
@@ -783,18 +957,29 @@ describe("taxPayable both year", function() {
           {"step":50000,"rate":6,"tax":3000},
           {"step":50000,"rate":10,"tax":5000},
           {"step":50000,"rate":14,"tax":7000},
-          {"step":5292000,"rate":17,"tax":899640}
+          {"step":6292000,"rate":17,"tax":1069640}
         ],
-        progressiveTax: 915640,
-        stdRateTax: 911100,
-        stdRate: 15,
+        progressiveTax: 1085640,
+        stdRateTaxBreakdown: [
+          {
+            rate: 15,
+            step: 5000000,
+            tax: 750000
+          },
+          {
+            rate: 16,
+            step: 2074000,
+            tax: 331840
+          }
+        ],
+        stdRateTax: 1081840,
         rate: 'stdRateTax',
-        tax: 911100
+        tax: 1081840
       },
-      taxThisYearFinal: 908350,
+      taxThisYearFinal: 1058350,
       taxThisYearProvisional: 500,
       rebate: 3000,
-      taxPayable: 1819450
+      taxPayable: 2140190
     };
     let actualResult = taxPayable(taxpayer,parents)
     assert.deepStrictEqual(actualResult, expectedResult);
