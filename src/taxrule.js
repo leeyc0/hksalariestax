@@ -71,8 +71,12 @@ class TaxRule {
   */
   calculateMpfDeduction (taxpayer) {
     let mpfDeduction = Math.floor(taxpayer.mpf * this.mpfMaxMultiplier)
-    if (mpfDeduction > this.mpfMax) {
-      mpfDeduction = this.mpfMax
+    let mpfMax = this.mpfMax
+    if (taxpayer.martialStatus === 1) {
+      mpfMax *= 2
+    }
+    if (mpfDeduction > mpfMax) {
+      mpfDeduction = mpfMax
     }
     return mpfDeduction
   }

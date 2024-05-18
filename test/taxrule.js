@@ -108,10 +108,22 @@ describe('calculateMpfDeduction', function() {
     taxpayer.mpf = 15000;
     assert.equal(taxRuleTest.calculateMpfDeduction(taxpayer), 15000);
   });
+  it('should return same amount as input when multiplier=1 and input<=cap (joint assessment)', function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    taxpayer.martialStatus = 1;
+    taxpayer.mpf = 30000;
+    assert.equal(taxRuleTest.calculateMpfDeduction(taxpayer), 30000);
+  });
   it('should return capped amount as input when multiplier=1 and input>cap', function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     taxpayer.mpf = 20000;
     assert.equal(taxRuleTest.calculateMpfDeduction(taxpayer), 18000);
+  });
+  it('should return capped amount as input when multiplier=1 and input>cap (joint assessment)', function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    taxpayer.martialStatus = 1;
+    taxpayer.mpf = 40000;
+    assert.equal(taxRuleTest.calculateMpfDeduction(taxpayer), 36000);
   });
   it('should return input*multiplier when multiplier>1 and input<=cap', function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
