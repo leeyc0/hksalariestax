@@ -800,10 +800,10 @@ describe("calculateTax", function() {
 
 describe("taxRebate", function() {
   it("rebate pro-rata when amount below cap", function() {
-    assert.equal(taxRebate(2000), 2000);
+    assert.equal(taxRebate(1000), 1000);
   });
   it("cap when tax rebate amount reaches cap", function() {
-    assert.equal(taxRebate(45000), 3000);
+    assert.equal(taxRebate(45000), 1500);
   });
 });
 
@@ -905,10 +905,10 @@ describe("taxPayable both year", function() {
         rate: 'progressiveTax',
         tax: 18720
       },
-      taxThisYearFinal: 16070,
+      taxThisYearFinal: 17570,
       taxThisYearProvisional: 500,
-      rebate: 3000,
-      taxPayable: 34790,
+      rebate: 1500,
+      taxPayable: 36290,
     };
     let actualResult = taxPayable(taxpayer,parents);
     assert.deepStrictEqual(actualResult, expectedResult);
@@ -942,13 +942,18 @@ describe("taxPayable both year", function() {
         stdRateTaxBreakdown: [
           {
             rate: 15,
-            step: 7079000,
-            tax: 1061850
+            step: 5000000,
+            tax: 750000
+          },
+          {
+            rate: 16,
+            step: 2079000,
+            tax: 332640
           }
         ],
-        stdRateTax: 1061850,
+        stdRateTax: 1082640,
         rate: 'stdRateTax',
-        tax: 1061850
+        tax: 1082640
       },
       taxNextYearProvisional: {
         income: 7100000,
@@ -988,10 +993,10 @@ describe("taxPayable both year", function() {
         rate: 'stdRateTax',
         tax: 1081840
       },
-      taxThisYearFinal: 1058350,
+      taxThisYearFinal: 1080640,
       taxThisYearProvisional: 500,
-      rebate: 3000,
-      taxPayable: 2140190
+      rebate: 1500,
+      taxPayable: 2162480
     };
     let actualResult = taxPayable(taxpayer,parents)
     assert.deepStrictEqual(actualResult, expectedResult);

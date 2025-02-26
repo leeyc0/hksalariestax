@@ -335,7 +335,7 @@ class TaxRule {
 
 function taxRebate (tax) {
   const rebateRate = 100
-  const maxRebate = 3000
+  const maxRebate = 1500
   let rebate = Math.ceil(tax * rebateRate / 100)
 
   if (rebate > maxRebate) {
@@ -350,7 +350,7 @@ function taxRebate (tax) {
   parents: array of {age:int(0-4), livingTogether:boolean}, see objects.js function Parent for attr definition
 */
 function taxPayable (taxpayer, parents) {
-  const taxRule2023 = new TaxRule({
+  const taxRule2024 = new TaxRule({
     progressiveRate: [
       { step: 50000, rate: 2 },
       { step: 50000, rate: 6 },
@@ -359,7 +359,8 @@ function taxPayable (taxpayer, parents) {
       { step: Infinity, rate: 17 }
     ],
     stdRate: [
-      { step: Infinity, rate: 15 }
+      { step: 5000000, rate: 15 },
+      { step: Infinity, rate: 16 }
     ],
     basicAllowance: 132000,
     marriedAllowance: 264000,
@@ -378,7 +379,7 @@ function taxPayable (taxpayer, parents) {
     provisionalYear: false
   })
 
-  const taxRule2024 = new TaxRule({
+  const taxRule2025 = new TaxRule({
     progressiveRate: [
       { step: 50000, rate: 2 },
       { step: 50000, rate: 6 },
@@ -407,8 +408,8 @@ function taxPayable (taxpayer, parents) {
     provisionalYear: true
   })
 
-  const taxThisYear = taxRule2023.calculateTax(taxpayer, parents)
-  const taxNextYearProvisional = taxRule2024.calculateTax(taxpayer, parents)
+  const taxThisYear = taxRule2024.calculateTax(taxpayer, parents)
+  const taxNextYearProvisional = taxRule2025.calculateTax(taxpayer, parents)
   const rebate = taxRebate(taxThisYear.tax)
   const taxThisYearFinal = taxThisYear.tax - taxpayer.provisionalTax - rebate
   const taxPayable = taxThisYear.tax - taxpayer.provisionalTax - rebate + taxNextYearProvisional.tax
