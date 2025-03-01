@@ -22,7 +22,7 @@ export function autocalculate () {
     for (const siblingCombo of combinatorics.indistinglishableBallInBoxes(this.totalSiblings, taxpayerList)) {
       for (const sibling18Combo of combinatorics.indistinglishableBallInBoxes(this.totalSiblings18, taxpayerList)) {
         for (const disabledSiblingCombo of combinatorics.indistinglishableBallInBoxes(this.totalDisabledSiblings, taxpayerList)) {
-          var totalTax = 0
+          let totalTax = 0
           const tempState = Object.assign({}, state)
           tempState.parentMap = new Map(state.parentMap)
           tempState.taxPayerMap = new Map(state.taxPayerMap)

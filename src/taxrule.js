@@ -241,7 +241,8 @@ class TaxRule {
     parents: see taxPayable
   */
   calculateTax (taxpayer, parents) {
-    const otherDeductions = this.provisionalYear ? taxpayer.otherDeductionsNextYear
+    const otherDeductions = this.provisionalYear
+      ? taxpayer.otherDeductionsNextYear
       : taxpayer.otherDeductionsThisYear
 
     // progressive rate: calculate taxable income
@@ -417,4 +418,4 @@ function taxPayable (taxpayer, parents) {
 }
 
 /* eslint-disable-next-line no-undef */
-module.exports = { TaxRule, taxRebate, taxPayable }
+export default { TaxRule, taxRebate, taxPayable }

@@ -10,28 +10,28 @@
     "test": "nyc mocha"
   },
   "dependencies": {
-    "core-js": "^3.28.0",
-    "vue": "^3.2.47",
+    "core-js": "^3.40.0",
+    "vue": "^3.5.13",
     "vue-final-modal": "^3.4.11",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.19",
-    "@vue/cli-plugin-eslint": "^4.5.19",
-    "@vue/cli-plugin-unit-mocha": "^4.5.19",
-    "@vue/cli-plugin-vuex": "^4.5.19",
-    "@vue/cli-service": "^4.5.19",
-    "@vue/compiler-sfc": "^3.2.47",
-    "@vue/eslint-config-standard": "^5.1.2",
-    "@vue/test-utils": "^2.3.0",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-plugin-unit-mocha": "^5.0.8",
+    "@vue/cli-plugin-vuex": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "@vue/compiler-sfc": "^3.5.13",
+    "@vue/eslint-config-standard": "^6.1.0",
+    "@vue/test-utils": "^2.4.6",
     "babel-eslint": "^10.1.0",
-    "chai": "^4.3.7",
-    "eslint": "^6.7.2",
-    "eslint-plugin-import": "^2.27.5",
+    "chai": "^5.2.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-standard": "^5.0.0",
     "eslint-plugin-vue": "^7.20.0",
-    "nyc": "^15.1.0"
+    "nyc": "^17.1.0"
   }
 }
