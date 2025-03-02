@@ -36,7 +36,7 @@
         </tr>
         <tr>
           <td>減：供養兄弟姊妹免稅額</td>
-          <td>{{formatNumber(taxResult.taxThisYear.siblingAllowance|formatNumber)}}</td>
+          <td>{{formatNumber(taxResult.taxThisYear.siblingAllowance | formatNumber)}}</td>
         </tr>
         <tr>
           <td>減：子女免稅額</td>
@@ -61,8 +61,8 @@
         <tr>
           <th colspan="2">累進稅率稅款計算</th>
         </tr>
-        <tr v-for="(tax,index) in taxResult.taxThisYear.progressiveTaxBreakdown" :key="index">
-          <td>{{progressiveTaxPrefix(index,taxResult.taxThisYear.progressiveTaxBreakdown)+formatNumber(tax.step)}}@{{tax.rate+"%"}}</td>
+        <tr v-for="(tax, index) in taxResult.taxThisYear.progressiveTaxBreakdown" :key="index">
+          <td>{{progressiveTaxPrefix(index, taxResult.taxThisYear.progressiveTaxBreakdown) + formatNumber(tax.step)}}@{{tax.rate + "%"}}</td>
           <td>{{formatNumber(tax.tax)}}</td>
         </tr>
         <tr v-for="i in progressiveThisYearExtraLines" :key="i">
@@ -94,8 +94,8 @@
         <tr>
           <th colspan="2">標準稅率稅款計算</th>
         </tr>
-        <tr v-for="(tax,index) in taxResult.taxThisYear.stdRateTaxBreakdown" :key="index">
-          <td>{{progressiveTaxPrefix(index,taxResult.taxThisYear.stdRateTaxBreakdown)+formatNumber(tax.step)}}@{{tax.rate+"%"}}</td>
+        <tr v-for="(tax, index) in taxResult.taxThisYear.stdRateTaxBreakdown" :key="index">
+          <td>{{progressiveTaxPrefix(index, taxResult.taxThisYear.stdRateTaxBreakdown) + formatNumber(tax.step)}}@{{tax.rate + "%"}}</td>
           <td>{{formatNumber(tax.tax)}}</td>
         </tr>
         <tr v-for="i in stdRateThisYearExtraLines" :key="i">
@@ -109,7 +109,7 @@
           <th colspan="2" class="line">{{$root.taxYear1}}年度最終稅款</th>
         </tr>
         <tr>
-          <td>適用稅率：{{taxResult.taxThisYear.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td>
+          <td>適用稅率：{{taxResult.taxThisYear.rate === "progressiveTax" ? "累進稅率" : "標準稅率"}}</td>
           <td>{{formatNumber(taxResult.taxThisYear.tax)}}</td>
         </tr>
         <tr>
@@ -160,7 +160,7 @@
         </tr>
         <tr>
           <td>減：供養兄弟姊妹免稅額</td>
-          <td>{{formatNumber(taxResult.taxNextYearProvisional.siblingAllowance|formatNumber)}}</td>
+          <td>{{formatNumber(taxResult.taxNextYearProvisional.siblingAllowance | formatNumber)}}</td>
         </tr>
         <tr>
           <td>減：子女免稅額</td>
@@ -185,8 +185,8 @@
         <tr>
           <th colspan="2">累進稅率稅款計算</th>
         </tr>
-        <tr v-for="(tax,index) in taxResult.taxNextYearProvisional.progressiveTaxBreakdown" :key="index">
-          <td>{{progressiveTaxPrefix(index,taxResult.taxNextYearProvisional.progressiveTaxBreakdown)+formatNumber(tax.step)}}@{{tax.rate+"%"}}</td>
+        <tr v-for="(tax, index) in taxResult.taxNextYearProvisional.progressiveTaxBreakdown" :key="index">
+          <td>{{progressiveTaxPrefix(index, taxResult.taxNextYearProvisional.progressiveTaxBreakdown) + formatNumber(tax.step)}}@{{tax.rate + "%"}}</td>
           <td>{{formatNumber(tax.tax)}}</td>
         </tr>
         <tr v-for="i in progressiveNextYearExtraLines" :key="i">
@@ -218,8 +218,8 @@
         <tr>
           <th colspan="2">標準稅率稅款計算</th>
         </tr>
-        <tr v-for="(tax,index) in taxResult.taxNextYearProvisional.stdRateTaxBreakdown" :key="index">
-          <td>{{progressiveTaxPrefix(index,taxResult.taxNextYearProvisional.stdRateTaxBreakdown)+formatNumber(tax.step)}}@{{tax.rate+"%"}}</td>
+        <tr v-for="(tax, index) in taxResult.taxNextYearProvisional.stdRateTaxBreakdown" :key="index">
+          <td>{{progressiveTaxPrefix(index, taxResult.taxNextYearProvisional.stdRateTaxBreakdown) + formatNumber(tax.step)}}@{{tax.rate + "%"}}</td>
           <td>{{formatNumber(tax.tax)}}</td>
         </tr>
         <tr v-for="i in stdRateNextYearExtraLines" :key="i">
@@ -233,7 +233,7 @@
           <th colspan="2" class="line">{{$root.taxYear1}}年度暫繳稅</th>
         </tr>
         <tr>
-          <td>適用稅率：{{taxResult.taxNextYearProvisional.rate=="progressiveTax" ? "累進稅率" : "標準稅率"}}</td>
+          <td>適用稅率：{{taxResult.taxNextYearProvisional.rate === "progressiveTax" ? "累進稅率" : "標準稅率"}}</td>
           <td>{{formatNumber(taxResult.taxNextYearProvisional.tax)}}</td>
         </tr>
         <tr>

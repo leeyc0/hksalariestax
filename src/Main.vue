@@ -21,24 +21,24 @@
     <br/>
     <div v-for="[i, taxPayer] of taxPayerMap" :key="i" class="taxPayerInput">
       <div>
-        <input size="12" :value="taxPayer.name" @change="changeTaxPayerProp({ i, prop:'name', val:$event.target.value })" /><br />
+        <input size="12" :value="taxPayer.name" @change="changeTaxPayerProp({ i, prop: 'name', val: $event.target.value })" /><br />
         稅款 <input size="10" readonly :value="taxPayerResult.get(i) === undefined ? '0' : formatNumber(taxPayerResult.get(i).taxPayable)" />
         <button type="button" @click="showTaxPayerModal(i)">填寫報稅表</button>
         <button type="button" @click="deleteTaxPayer(i)">刪除</button><br/>
         健全兄弟姊妹
-        <input :value="taxPayer.siblings" @change="changeTaxPayerProp({ i, prop:'siblings', val:parseInt($event.target.value) })" type="number" min="0" />
+        <input :value="taxPayer.siblings" @change="changeTaxPayerProp({ i, prop: 'siblings', val: parseInt($event.target.value) })" type="number" min="0" />
         傷殘兄弟姊妹
-        <input :value="taxPayer.disabledSiblings" @change="changeTaxPayerProp({ i, prop:'disabledSiblings', val:parseInt($event.target.value) })" type="number" min="0" />
+        <input :value="taxPayer.disabledSiblings" @change="changeTaxPayerProp({ i, prop: 'disabledSiblings', val: parseInt($event.target.value) })" type="number" min="0" />
         <br />
         健全兄弟姊妹（{{$root.taxYear2}}年度年滿）
-        <input :value="taxPayer.siblings18" @change="changeTaxPayerProp({ i, prop:'siblings18', val:parseInt($event.target.value) })" type="number" min="0" />
+        <input :value="taxPayer.siblings18" @change="changeTaxPayerProp({ i, prop: 'siblings18', val: parseInt($event.target.value) })" type="number" min="0" />
         <br />
         父母免稅額
         <div class="flex">
           <div v-for="parent in parentsClaimedByTaxpayer.get(i)" :key="parent.id" class="parentTag">
             {{parent.name}}
           </div>
-          <div v-if="parentsClaimedByTaxpayer.get(i).length===0">
+          <div v-if="parentsClaimedByTaxpayer.get(i).length === 0">
             （無）
           </div>
         </div>
@@ -50,8 +50,8 @@
     <button type="button" @click="addParent">新增</button><br/>
     <div v-for="[i, parent] of parentMap" :key="i" class="parentInput">
       <div>
-        <input :value="parent.name" @change="changeParentProp({ i, prop:'name', val:$event.target.value })" />
-        <select @change="changeParentProp({ i, prop:'age', val:parseInt($event.target.value) })">
+        <input :value="parent.name" @change="changeParentProp({ i, prop: 'name', val: $event.target.value })" />
+        <select @change="changeParentProp({ i, prop: 'age', val: parseInt($event.target.value) })">
           <option :value="0" v-bind:selected="parent.age === 0">傷殘——不論年齡</option>
           <optgroup label="以下選項均非傷殘人士"/>
           <option :value="1" v-bind:selected="parent.age === 1">於{{taxYear1}}年度滿54歲</option>

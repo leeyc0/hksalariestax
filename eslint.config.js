@@ -1,9 +1,11 @@
 import globals from "globals";
 import pluginVue from 'eslint-plugin-vue';
+import pluginImport from 'eslint-plugin-import';
 import standard from "@vue/eslint-config-standard";
 
 export default [
     ...pluginVue.configs["flat/essential"],
+    pluginImport.flatConfigs.recommended,
     ...standard,
     {
         languageOptions: {
@@ -11,7 +13,7 @@ export default [
                 ...globals.node,
             },
 
-            ecmaVersion: 2022,
+            ecmaVersion: 'latest',
             sourceType: "module",
         },
 
