@@ -156,13 +156,13 @@ input[type=number] {
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import taxrule from './taxrule.js'
 import { autocalculate } from './autocalculate.js'
-import taxpayer from './taxpayer.vue'
-import taxresult from './taxresult.vue'
+import taxpayer from './taxPayer.vue'
+import taxresult from './taxResult.vue'
 
 const numberFormatter = new Intl.NumberFormat()
 
 export default {
-  name: 'Main',
+  name: 'TaxCalculator',
   data: () => ({
     taxYear1: '2024/25',
     taxYear2: '2025/26',
