@@ -58,7 +58,6 @@ export function autocalculate () {
             minimumState = tempState
           }
 
-          // eslint-disable-next-line no-console
           console.log({
             totalTax,
             parentCombo: new Map(parentCombo),

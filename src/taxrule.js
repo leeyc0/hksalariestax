@@ -417,5 +417,4 @@ function taxPayable (taxpayer, parents) {
   return { taxThisYear, taxThisYearFinal, taxNextYearProvisional, taxThisYearProvisional: taxpayer.provisionalTax, rebate, taxPayable }
 }
 
-/* eslint-disable-next-line no-undef */
 export default { TaxRule, taxRebate, taxPayable }
