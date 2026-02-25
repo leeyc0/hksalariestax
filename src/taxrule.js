@@ -336,7 +336,7 @@ class TaxRule {
 
 function taxRebate (tax) {
   const rebateRate = 100
-  const maxRebate = 1500
+  const maxRebate = 3000
   let rebate = Math.ceil(tax * rebateRate / 100)
 
   if (rebate > maxRebate) {
@@ -351,7 +351,7 @@ function taxRebate (tax) {
   parents: array of {age:int(0-4), livingTogether:boolean}, see objects.js function Parent for attr definition
 */
 function taxPayable (taxpayer, parents) {
-  const taxRule2024 = new TaxRule({
+  const taxRule2025 = new TaxRule({
     progressiveRate: [
       { step: 50000, rate: 2 },
       { step: 50000, rate: 6 },
@@ -379,8 +379,7 @@ function taxPayable (taxpayer, parents) {
     personalDisabilityAllowance: 75000,
     provisionalYear: false
   })
-
-  const taxRule2025 = new TaxRule({
+  const taxRule2026 = new TaxRule({
     progressiveRate: [
       { step: 50000, rate: 2 },
       { step: 50000, rate: 6 },
@@ -392,25 +391,25 @@ function taxPayable (taxpayer, parents) {
       { step: 5000000, rate: 15 },
       { step: Infinity, rate: 16 }
     ],
-    basicAllowance: 132000,
-    marriedAllowance: 264000,
+    basicAllowance: 145000,
+    marriedAllowance: 290000,
     mpfMax: 18000,
     mpfMaxMultiplier: 1.0,
-    parentAllowance: 50000,
-    parentAdditionalAllowance: 50000,
-    parentAllowance55: 25000,
-    parentAdditionalAllowance55: 25000,
+    parentAllowance: 55000,
+    parentAdditionalAllowance: 55000,
+    parentAllowance55: 27500,
+    parentAdditionalAllowance55: 27500,
     siblingAllowance: 37500,
     disabledDependentAllowance: 75000,
-    childAllowance: 130000,
-    singleParentAllowance: 132000,
-    newbornChildAdditionalAllowance: 130000,
+    childAllowance: 140000,
+    singleParentAllowance: 145000,
+    newbornChildAdditionalAllowance: 140000,
     personalDisabilityAllowance: 75000,
     provisionalYear: true
   })
 
-  const taxThisYear = taxRule2024.calculateTax(taxpayer, parents)
-  const taxNextYearProvisional = taxRule2025.calculateTax(taxpayer, parents)
+  const taxThisYear = taxRule2025.calculateTax(taxpayer, parents)
+  const taxNextYearProvisional = taxRule2026.calculateTax(taxpayer, parents)
   const rebate = taxRebate(taxThisYear.tax)
   const taxThisYearFinal = taxThisYear.tax - taxpayer.provisionalTax - rebate
   const taxPayable = taxThisYear.tax - taxpayer.provisionalTax - rebate + taxNextYearProvisional.tax
