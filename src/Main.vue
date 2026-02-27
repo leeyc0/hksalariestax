@@ -9,9 +9,9 @@
     自動分配免稅額專用選項
     <table>
       <tbody>
-        <tr><td>受供養健全兄弟姊妹總數</td><td><input type="number" v-model.number="totalSiblings" /></td></tr>
-        <tr><td>受供養健全兄弟姊妹總數<br>（{{taxYear2}}年度失去資格）</td><td><input type="number" v-model.number="totalSiblings18" /></td></tr>
-        <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" v-model.number="totalDisabledSiblings" /></td></tr>
+        <tr><td>受供養健全兄弟姊妹總數</td><td><input type="number" min="0" v-model.number="totalSiblings" /></td></tr>
+        <tr><td>受供養健全兄弟姊妹總數<br>（{{taxYear2}}年度失去資格）</td><td><input type="number" min="0" v-model.number="totalSiblings18" /></td></tr>
+        <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" min="0" v-model.number="totalDisabledSiblings" /></td></tr>
       </tbody>
     </table>
     <button type="button" @click="optimizeTax()">自動分配免稅額</button>
@@ -23,17 +23,17 @@
     <br/>
     <div v-for="[i, taxPayer] of taxPayerMap" :key="i" class="taxPayerInput">
       <div>
-        <input size="12" :value="taxPayer.name" @change="changeTaxPayerProp({ i, prop: 'name', val: $event.target.value })" /><br />
+        <input size="12" v-model="taxPayer.name" /><br />
         稅款 <input size="10" readonly :value="taxPayerResult.get(i) === undefined ? '0' : formatNumber(taxPayerResult.get(i).taxPayable)" />
         <button type="button" @click="openTaxPayerButton(i)">填寫報稅表</button>
         <button type="button" @click="deleteTaxPayer(i)">刪除</button><br/>
         健全兄弟姊妹
-        <input :value="taxPayer.siblings" @change="changeTaxPayerProp({ i, prop: 'siblings', val: parseInt($event.target.value) })" type="number" min="0" />
+        <input v-model="taxPayer.siblings" type="number" min="0" />
         傷殘兄弟姊妹
-        <input :value="taxPayer.disabledSiblings" @change="changeTaxPayerProp({ i, prop: 'disabledSiblings', val: parseInt($event.target.value) })" type="number" min="0" />
+        <input v-model="taxPayer.disabledSiblings" type="number" min="0" />
         <br />
         健全兄弟姊妹（{{taxYear2}}年度年滿）
-        <input :value="taxPayer.siblings18" @change="changeTaxPayerProp({ i, prop: 'siblings18', val: parseInt($event.target.value) })" type="number" min="0" />
+        <input v-model="taxPayer.siblings18" type="number" min="0" />
         <br />
         父母免稅額
         <div class="flex">
@@ -52,22 +52,21 @@
     <button type="button" @click="addParent()">新增</button><br/>
     <div v-for="[i, parent] of parentMap" :key="i" class="parentInput">
       <div>
-        <input :value="parent.name" @change="changeParentProp({ i, prop: 'name', val: $event.target.value })" />
-        <select @change="changeParentProp({ i, prop: 'age', val: parseInt($event.target.value) })">
-          <option :value="0" v-bind:selected="parent.age === 0">傷殘——不論年齡</option>
+        <input v-model="parent.name" />
+        <select v-model="parent.age">
+          <option :value="0">傷殘——不論年齡</option>
           <optgroup label="以下選項均非傷殘人士"/>
-          <option :value="1" v-bind:selected="parent.age === 1">於{{taxYear1}}年度滿54歲</option>
-          <option :value="2" v-bind:selected="parent.age === 2">於{{taxYear1}}年度滿55歲</option>
-          <option :value="3" v-bind:selected="parent.age === 3">於{{taxYear1}}年度滿59歲</option>
-          <option :value="4" v-bind:selected="parent.age === 4">於{{taxYear1}}年度滿60歲</option>
+          <option :value="1">於{{taxYear1}}年度滿54歲</option>
+          <option :value="2">於{{taxYear1}}年度滿55歲</option>
+          <option :value="3">於{{taxYear1}}年度滿59歲</option>
+          <option :value="4">於{{taxYear1}}年度滿60歲</option>
         </select>
         <button type="button" @click="deleteParent(i)">刪除</button><br/>
       </div>
       <div class="flex">
         <div v-for="[taxPayerId, taxPayer] of taxPayerMap" :key="taxPayerId">
           <label>
-            <input type="radio" :name="'parent'.concat(i)" :checked="parent.claimedBy === taxPayerId"
-              @change="setParentClaimedBy(i, taxPayerId)" /> {{taxPayer.name}}
+            <input type="radio" :name="'parent'.concat(i)" v-model="parent.claimedBy" :value="taxPayerId" /> {{taxPayer.name}}
           </label>
           <label>
             <input type="checkbox" :checked="parent.livingTogether.get(taxPayerId)"
@@ -179,7 +178,7 @@ function formatNumber (num) {
   return numberFormatter.format(num)
 }
 
-function optimizeTax() {
+function optimizeTax () {
   autocalculate(store, totalSiblings.value, totalSiblings18.value, totalDisabledSiblings.value)
   computeTax()
 }
@@ -213,24 +212,12 @@ function deleteTaxPayer (i) {
   }
 }
 
-function changeTaxPayerProp (obj) {
-  store.changeTaxPayerProp(obj)
-}
-
 function addParent () {
   store.addParent()
 }
 
 function deleteParent (i) {
   store.deleteParent(i)
-}
-
-function changeParentProp (obj) {
-  store.changeParentProp(obj)
-}
-
-function setParentClaimedBy (parentId, taxPayerId) {
-  store.setParentClaimedBy({ parentId, taxPayerId })
 }
 
 function setParentLivingTogether (event, parentId, taxPayerId) {
@@ -244,20 +231,18 @@ function openTaxPayerButton (i) {
     attrs: {
       taxYear1,
       taxYear2,
-      index: showTaxPayerIndex.value,
-      taxPayer: store.taxPayerMap.get(showTaxPayerIndex.value),
+      index: i,
       onCloseTaxPayerModal () {
         closeTaxPayerModal()
       },
       onOpenTaxResultModal () {
         computeTax()
-        closeTaxPayerModal()
         const { open: openTaxResultModal, close: closeTaxResultModal } = useModal({
           component: TaxResultComponent,
           attrs: {
             taxYear1,
             taxYear2,
-            taxResult: taxPayerResult.value.get(showTaxPayerIndex.value),
+            taxResult: taxPayerResult.value.get(i),
             onCloseTaxResultModal () {
               closeTaxResultModal()
             },
@@ -267,6 +252,7 @@ function openTaxPayerButton (i) {
             }
           }
         })
+        closeTaxPayerModal()
         openTaxResultModal()
       }
     }
