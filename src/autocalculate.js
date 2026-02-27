@@ -3,35 +3,34 @@
 import combinatorics from './combinatorics.js'
 import taxrule from './taxrule.js'
 
-export function autocalculate () {
+export function autocalculate (store, totalSiblings, totalSiblings18, totalDisabledSiblings) {
   const parentList = []
   const taxpayerList = []
-  const state = this.$store.state
   let minimumState = null
   let minimumTax = Infinity
 
-  for (const i of state.parentMap.keys()) {
+  for (const i of store.parentMap.keys()) {
     parentList.push(i)
   }
 
-  for (const i of state.taxPayerMap.keys()) {
+  for (const i of store.taxPayerMap.keys()) {
     taxpayerList.push(i)
   }
 
   for (const parentCombo of combinatorics.distinglishableBallInBoxes(parentList, taxpayerList)) {
-    for (const siblingCombo of combinatorics.indistinglishableBallInBoxes(this.totalSiblings, taxpayerList)) {
-      for (const sibling18Combo of combinatorics.indistinglishableBallInBoxes(this.totalSiblings18, taxpayerList)) {
-        for (const disabledSiblingCombo of combinatorics.indistinglishableBallInBoxes(this.totalDisabledSiblings, taxpayerList)) {
+    for (const siblingCombo of combinatorics.indistinglishableBallInBoxes(totalSiblings, taxpayerList)) {
+      for (const sibling18Combo of combinatorics.indistinglishableBallInBoxes(totalSiblings18, taxpayerList)) {
+        for (const disabledSiblingCombo of combinatorics.indistinglishableBallInBoxes(totalDisabledSiblings, taxpayerList)) {
           let totalTax = 0
-          const tempState = Object.assign({}, state)
-          tempState.parentMap = new Map(state.parentMap)
-          tempState.taxPayerMap = new Map(state.taxPayerMap)
-          for (const [parentId, parent] of state.parentMap) {
+          const tempState = Object.assign({}, store)
+          tempState.parentMap = new Map(store.parentMap)
+          tempState.taxPayerMap = new Map(store.taxPayerMap)
+          for (const [parentId, parent] of store.parentMap) {
             tempState.parentMap.set(parentId, Object.assign({}, parent))
           }
 
           const parentsMapForTaxpayable = new Map()
-          for (const taxpayerId of state.taxPayerMap.keys()) {
+          for (const taxpayerId of store.taxPayerMap.keys()) {
             parentsMapForTaxpayable.set(taxpayerId, [])
             for (const parentId of parentCombo.get(taxpayerId)) {
               const parent = tempState.parentMap.get(parentId)
@@ -42,7 +41,7 @@ export function autocalculate () {
             }
           }
 
-          for (const [taxpayerId, taxPayer] of state.taxPayerMap) {
+          for (const [taxpayerId, taxPayer] of store.taxPayerMap) {
             const taxPayerClone = Object.assign({}, taxPayer)
             tempState.taxPayerMap.set(taxpayerId, taxPayerClone)
 
@@ -69,6 +68,5 @@ export function autocalculate () {
       }
     }
   }
-  this.$store.replaceState(minimumState)
-  this.computeTax()
+  store.$patch(minimumState)
 }

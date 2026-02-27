@@ -20,6 +20,8 @@ export default [
         rules: {
             "no-console": "off",
             "no-debugger": "off",
+            "vue/multi-word-component-names": "off",
+            "import/no-unresolved": "off",
         },
     },
     {

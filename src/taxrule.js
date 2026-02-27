@@ -119,8 +119,8 @@ class TaxRule {
               break
           }
           return parentCountAccu
-        }
-        , parentCount)
+        },
+        parentCount)
     } else {
       parents.reduce(
         function (parentCountAccu, parentObj) {
@@ -143,8 +143,8 @@ class TaxRule {
               break
           }
           return parentCountAccu
-        }
-        , parentCount)
+        },
+        parentCount)
     }
     totalParentAllowance += (parentCount.livingTogether + parentCount.nonLivingTogether) * this.parentAllowance
     totalParentAllowance += parentCount.livingTogether * this.parentAdditionalAllowance

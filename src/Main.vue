@@ -14,25 +14,25 @@
         <tr><td>受供養傷殘兄弟姊妹總數</td><td><input type="number" v-model.number="totalDisabledSiblings" /></td></tr>
       </tbody>
     </table>
-    <button type="button" @click="autocalculate">自動分配免稅額</button>
+    <button type="button" @click="optimizeTax()">自動分配免稅額</button>
   </div>
   <div id="taxpayerform" class="border">
     納稅人
-    <button type="button" @click="addTaxPayer">新增</button>
+    <button type="button" @click="addTaxPayer()">新增</button>
     <button type="button" @click="computeTax()">全部計算</button>
     <br/>
     <div v-for="[i, taxPayer] of taxPayerMap" :key="i" class="taxPayerInput">
       <div>
         <input size="12" :value="taxPayer.name" @change="changeTaxPayerProp({ i, prop: 'name', val: $event.target.value })" /><br />
         稅款 <input size="10" readonly :value="taxPayerResult.get(i) === undefined ? '0' : formatNumber(taxPayerResult.get(i).taxPayable)" />
-        <button type="button" @click="showTaxPayerModal(i)">填寫報稅表</button>
+        <button type="button" @click="openTaxPayerButton(i)">填寫報稅表</button>
         <button type="button" @click="deleteTaxPayer(i)">刪除</button><br/>
         健全兄弟姊妹
         <input :value="taxPayer.siblings" @change="changeTaxPayerProp({ i, prop: 'siblings', val: parseInt($event.target.value) })" type="number" min="0" />
         傷殘兄弟姊妹
         <input :value="taxPayer.disabledSiblings" @change="changeTaxPayerProp({ i, prop: 'disabledSiblings', val: parseInt($event.target.value) })" type="number" min="0" />
         <br />
-        健全兄弟姊妹（{{$root.taxYear2}}年度年滿）
+        健全兄弟姊妹（{{taxYear2}}年度年滿）
         <input :value="taxPayer.siblings18" @change="changeTaxPayerProp({ i, prop: 'siblings18', val: parseInt($event.target.value) })" type="number" min="0" />
         <br />
         父母免稅額
@@ -49,7 +49,7 @@
   </div>
   <div id="parentform" class="border">
     受供養父母
-    <button type="button" @click="addParent">新增</button><br/>
+    <button type="button" @click="addParent()">新增</button><br/>
     <div v-for="[i, parent] of parentMap" :key="i" class="parentInput">
       <div>
         <input :value="parent.name" @change="changeParentProp({ i, prop: 'name', val: $event.target.value })" />
@@ -78,10 +78,7 @@
     </div>
   </div>
 </div>
-<taxpayer ref="taxpayer" v-if="taxPayerMap.get(showTaxPayerIndex) !== undefined" :tax-payer="taxPayerMap.get(showTaxPayerIndex)"
-  :index="showTaxPayerIndex" @showTaxResult="showTaxResult" @opened="taxpayerOpen" @before-close="taxpayerClose" />
-<taxresult ref="taxresult" v-if="taxPayerResult.get(showTaxPayerIndex) !== undefined" :tax-result="taxPayerResult.get(showTaxPayerIndex)"
-  :index="showTaxPayerIndex" @opened="taxresultOpen" @before-close="taxresultClose" />
+<ModalsContainer />
 </template>
 
 <style>
@@ -154,111 +151,128 @@ input[type=number] {
 }
 </style>
 
-<script>
-import { mapState, mapGetters, mapMutations } from 'vuex'
-import taxrule from './taxrule.js'
-import { autocalculate } from './autocalculate.js'
-import taxpayer from './taxPayer.vue'
-import taxresult from './taxResult.vue'
+<script setup>
+import { ref } from 'vue'
+import { useModal, ModalsContainer } from 'vue-final-modal'
+import { useTaxStore } from '@/stores/tax'
+import { storeToRefs } from 'pinia'
+import taxrule from '@/taxrule.js'
+import { autocalculate } from '@/autocalculate.js'
+import TaxPayerComponent from '@/taxPayer.vue'
+import TaxResultComponent from '@/taxResult.vue'
+
+// component data
+const taxYear1 = ref('2025/26')
+const taxYear2 = ref('2026/27')
+const showTaxPayerIndex = ref(1)
+const taxPayerResult = ref(new Map())
+const totalSiblings = ref(0)
+const totalSiblings18 = ref(0)
+const totalDisabledSiblings = ref(0)
+
+const store = useTaxStore()
+const { taxPayerMap, parentMap, parentsClaimedByTaxpayer } = storeToRefs(store)
 
 const numberFormatter = new Intl.NumberFormat()
 
-export default {
-  name: 'TaxCalculator',
-  data: () => ({
-    taxYear1: '2025/26',
-    taxYear2: '2026/27',
-    showTaxPayerIndex: 1,
-    taxPayerResult: new Map(),
-    totalSiblings: 0,
-    totalSiblings18: 0,
-    totalDisabledSiblings: 0
-  }),
-  computed: {
-    ...mapState(['taxPayerMap', 'parentMap']),
-    ...mapGetters(['parentsClaimedByTaxpayer'])
-  },
-  components: {
-    taxpayer,
-    taxresult
-  },
-  created () {
-    this.computeTax()
-  },
-  methods: {
-    showTaxPayerModal (i) {
-      this.showTaxPayerIndex = i
-      this.$vfm.show('taxPayerModal')
-    },
-    disableModalMethod () {
-      this.showTaxPayerIndex = NaN
-    },
-    ...mapMutations(['addParent', 'deleteParent', 'changeTaxPayerProp', 'changeParentProp']),
-    addTaxPayer () {
-      this.$store.commit('addTaxPayer')
-      if (isNaN(this.showTaxPayerIndex)) {
-        this.showTaxPayerIndex = this.taxPayerMap.keys().next().value
-        this.computeTax()
-      }
-      this.computeTax()
-    },
-    deleteTaxPayer (i) {
-      this.$store.commit('deleteTaxPayer', i)
-      this.taxPayerResult.delete(i)
-      if (i === this.showTaxPayerIndex) {
-        const nextVal = this.taxPayerMap.keys().next()
-        if (nextVal.done) {
-          this.showTaxPayerIndex = NaN
-        } else {
-          this.computeTax()
-          this.showTaxPayerIndex = nextVal.value
-        }
-      }
-    },
-    computeTax () {
-      const parentsMapForTaxpayable = this.$store.getters.parentsClaimedByTaxpayer
-      for (const i of this.taxPayerMap.keys()) {
-        const taxResult = taxrule.taxPayable(this.taxPayerMap.get(i), parentsMapForTaxpayable.get(i))
-        this.taxPayerResult.set(i, taxResult)
-      }
-    },
-    showTaxResult () {
-      this.computeTax()
-      this.$vfm.hide('taxPayerModal')
-      this.$vfm.show('taxResultModal')
-    },
-    setParentClaimedBy (parentId, taxPayerId) {
-      this.$store.commit('setParentClaimedBy', { parentId, taxPayerId })
-    },
-    setParentLivingTogether (event, parentId, taxPayerId) {
-      this.$store.commit('setParentLivingTogether', { parentId, taxPayerId, livingTogether: event.target.checked })
-    },
-    taxpayerOpenKeydownListener (event) {
-      if (event.key === 'Enter') {
-        document.activeElement.dispatchEvent(new Event('change'))
-        this.showTaxResult()
-      }
-    },
-    taxresultOpenKeydownListener (event) {
-      if (event.key === 'Backspace') {
-        this.$vfm.hide('taxResultModal')
-        this.$vfm.show('taxPayerModal')
-      }
-    },
-    taxpayerOpen () {
-      this.$refs.taxpayer.$el.addEventListener('keydown', this.taxpayerOpenKeydownListener)
-    },
-    taxpayerClose () {
-      this.$refs.taxpayer.$el.removeEventListener('keydown', this.taxpayerOpenKeydownListener)
-    },
-    taxresultOpen () {
-      this.$refs.taxresult.$el.addEventListener('keydown', this.taxresultOpenKeydownListener)
-    },
-    taxresultClose () {
-      this.$refs.taxresult.$el.removeEventListener('keydown', this.taxresultOpenKeydownListener)
-    },
-    formatNumber: (num) => numberFormatter.format(num),
-    autocalculate
+function formatNumber (num) {
+  return numberFormatter.format(num)
+}
+
+function optimizeTax() {
+  autocalculate(store, totalSiblings.value, totalSiblings18.value, totalDisabledSiblings.value)
+  computeTax()
+}
+
+function computeTax () {
+  for (const i of store.taxPayerMap.keys()) {
+    const taxResult = taxrule.taxPayable(store.taxPayerMap.get(i), store.parentsClaimedByTaxpayer.get(i))
+    taxPayerResult.value.set(i, taxResult)
   }
 }
+
+function addTaxPayer () {
+  store.addTaxPayer()
+  if (isNaN(showTaxPayerIndex.value)) {
+    showTaxPayerIndex.value = store.taxPayerMap.keys().next().value
+  }
+  computeTax()
+}
+
+function deleteTaxPayer (i) {
+  store.deleteTaxPayer(i)
+  taxPayerResult.value.delete(i)
+  if (i === showTaxPayerIndex.value) {
+    const nextVal = store.taxPayerMap.keys().next()
+    if (nextVal.done) {
+      showTaxPayerIndex.value = NaN
+    } else {
+      this.computeTax()
+      showTaxPayerIndex.value = nextVal.value
+    }
+  }
+}
+
+function changeTaxPayerProp (obj) {
+  store.changeTaxPayerProp(obj)
+}
+
+function addParent () {
+  store.addParent()
+}
+
+function deleteParent (i) {
+  store.deleteParent(i)
+}
+
+function changeParentProp (obj) {
+  store.changeParentProp(obj)
+}
+
+function setParentClaimedBy (parentId, taxPayerId) {
+  store.setParentClaimedBy({ parentId, taxPayerId })
+}
+
+function setParentLivingTogether (event, parentId, taxPayerId) {
+  store.setParentLivingTogether({ parentId, taxPayerId, livingTogether: event.target.checked })
+}
+
+function openTaxPayerButton (i) {
+  showTaxPayerIndex.value = i
+  const { open: openTaxPayerModal, close: closeTaxPayerModal } = useModal({
+    component: TaxPayerComponent,
+    attrs: {
+      taxYear1,
+      taxYear2,
+      index: showTaxPayerIndex.value,
+      taxPayer: store.taxPayerMap.get(showTaxPayerIndex.value),
+      onCloseTaxPayerModal () {
+        closeTaxPayerModal()
+      },
+      onOpenTaxResultModal () {
+        computeTax()
+        closeTaxPayerModal()
+        const { open: openTaxResultModal, close: closeTaxResultModal } = useModal({
+          component: TaxResultComponent,
+          attrs: {
+            taxYear1,
+            taxYear2,
+            taxResult: taxPayerResult.value.get(showTaxPayerIndex.value),
+            onCloseTaxResultModal () {
+              closeTaxResultModal()
+            },
+            onBackToTaxPayerModal () {
+              closeTaxResultModal()
+              openTaxPayerModal()
+            }
+          }
+        })
+        openTaxResultModal()
+      }
+    }
+  })
+  openTaxPayerModal()
+}
+
+computeTax()
 </script>

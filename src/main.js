@@ -1,7 +1,8 @@
 'use strict'
 import { createApp } from 'vue'
-import vueFinalModal from 'vue-final-modal'
+import { createVfm } from 'vue-final-modal'
 import TaxCalculator from './Main.vue'
-import store from './store'
+import { createPinia } from 'pinia'
+import 'vue-final-modal/style.css'
 
-createApp(TaxCalculator).use(store).use(vueFinalModal()).mount('#app')
+createApp(TaxCalculator).use(createPinia()).use(createVfm()).mount('#app')
