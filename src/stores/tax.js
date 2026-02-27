@@ -65,11 +65,6 @@ export const useTaxStore = defineStore('tax', {
       }
     },
 
-    changeTaxPayerProp ({ i, prop, val }) {
-      const payer = this.taxPayerMap.get(i)
-      if (payer) payer[prop] = val
-    },
-
     addParent () {
       // Ensure there is at least one taxpayer to link to
       const firstTaxPayerId = this.taxPayerMap.keys().next().value
@@ -84,16 +79,6 @@ export const useTaxStore = defineStore('tax', {
 
     deleteParent (id) {
       this.parentMap.delete(id)
-    },
-
-    changeParentProp ({ i, prop, val }) {
-      const parent = this.parentMap.get(i)
-      if (parent) parent[prop] = val
-    },
-
-    setParentClaimedBy ({ parentId, taxPayerId }) {
-      const parent = this.parentMap.get(parentId)
-      if (parent) parent.claimedBy = taxPayerId
     },
 
     setParentLivingTogether ({ parentId, taxPayerId, livingTogether }) {
