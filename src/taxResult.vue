@@ -320,7 +320,7 @@ import { VueFinalModal } from 'vue-final-modal'
 const numberFormatter = new Intl.NumberFormat()
 
 const props = defineProps(['taxResult', 'taxYear1', 'taxYear2'])
-const emit = defineEmits(['closeTaxResult', 'backToTaxPayerModal'])
+const emit = defineEmits(['closeTaxResultModal', 'backToTaxPayerModal'])
 
 function keydownEventlistener (event) {
   if (event.key === 'Backspace') {

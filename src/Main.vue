@@ -77,7 +77,11 @@
     </div>
   </div>
 </div>
-<ModalsContainer />
+<TaxPayerComponent modalId="taxPayerComponent" :tax-year1="taxYear1" :tax-year2="taxYear2" :index="showTaxPayerIndex" 
+  :model-value="false" @closeTaxPayerModal="closeTaxPayerModal()" @openTaxResultModal="openTaxResultModal()" />
+<TaxResultComponent modalId="taxResultComponent" :tax-year1="taxYear1" :tax-year2="taxYear2" 
+  :model-value="false" :taxResult="taxPayerResult.get(showTaxPayerIndex)" @closeTaxResultModal="closeTaxResultModal()"
+  @backToTaxPayerModal="backToTaxPayerModal()" />
 </template>
 
 <style>
@@ -152,13 +156,15 @@ input[type=number] {
 
 <script setup>
 import { ref } from 'vue'
-import { useModal, ModalsContainer } from 'vue-final-modal'
+import { useVfm } from 'vue-final-modal'
 import { useTaxStore } from '@/stores/tax'
 import { storeToRefs } from 'pinia'
 import taxrule from '@/taxrule.js'
 import { autocalculate } from '@/autocalculate.js'
 import TaxPayerComponent from '@/taxPayer.vue'
 import TaxResultComponent from '@/taxResult.vue'
+
+const vfm = useVfm()
 
 // component data
 const taxYear1 = ref('2025/26')
@@ -206,7 +212,7 @@ function deleteTaxPayer (i) {
     if (nextVal.done) {
       showTaxPayerIndex.value = NaN
     } else {
-      this.computeTax()
+      computeTax()
       showTaxPayerIndex.value = nextVal.value
     }
   }
@@ -226,38 +232,26 @@ function setParentLivingTogether (event, parentId, taxPayerId) {
 
 function openTaxPayerButton (i) {
   showTaxPayerIndex.value = i
-  const { open: openTaxPayerModal, close: closeTaxPayerModal } = useModal({
-    component: TaxPayerComponent,
-    attrs: {
-      taxYear1,
-      taxYear2,
-      index: i,
-      onCloseTaxPayerModal () {
-        closeTaxPayerModal()
-      },
-      onOpenTaxResultModal () {
-        computeTax()
-        const { open: openTaxResultModal, close: closeTaxResultModal } = useModal({
-          component: TaxResultComponent,
-          attrs: {
-            taxYear1,
-            taxYear2,
-            taxResult: taxPayerResult.value.get(i),
-            onCloseTaxResultModal () {
-              closeTaxResultModal()
-            },
-            onBackToTaxPayerModal () {
-              closeTaxResultModal()
-              openTaxPayerModal()
-            }
-          }
-        })
-        closeTaxPayerModal()
-        openTaxResultModal()
-      }
-    }
-  })
-  openTaxPayerModal()
+  vfm.open("taxPayerComponent")
+}
+
+function closeTaxPayerModal () {
+  vfm.close("taxPayerComponent")
+}
+
+function openTaxResultModal () {
+  computeTax()
+  vfm.close("taxPayerComponent")
+  vfm.open("taxResultComponent")
+}
+
+function closeTaxResultModal () {
+  vfm.close("taxResultComponent")
+}
+
+function backToTaxPayerModal () {
+  vfm.close("taxResultComponent")
+  vfm.open("taxPayerComponent")
 }
 
 computeTax()
