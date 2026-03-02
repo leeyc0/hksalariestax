@@ -319,7 +319,20 @@ import { VueFinalModal } from 'vue-final-modal'
 
 const numberFormatter = new Intl.NumberFormat()
 
-const props = defineProps(['taxResult', 'taxYear1', 'taxYear2'])
+const props = defineProps({
+  taxResult: {
+    type: Object,
+    required: true
+  },
+  taxYear1: {
+    type: String,
+    required: true
+  },
+  taxYear2: {
+    type: String,
+    required: true
+  }
+})
 const emit = defineEmits(['closeTaxResultModal', 'backToTaxPayerModal'])
 
 function keydownEventlistener (event) {

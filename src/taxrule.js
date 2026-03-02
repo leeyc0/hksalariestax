@@ -379,6 +379,7 @@ function taxPayable (taxpayer, parents) {
     personalDisabilityAllowance: 75000,
     provisionalYear: false
   })
+
   const taxRule2026 = new TaxRule({
     progressiveRate: [
       { step: 50000, rate: 2 },

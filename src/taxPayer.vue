@@ -123,7 +123,20 @@ import { useTaxStore } from '@/stores/tax'
 const store = useTaxStore()
 const { taxPayerMap, parentMap } = storeToRefs(store)
 
-const props = defineProps(['index', 'taxYear1', 'taxYear2'])
+const props = defineProps({
+  index: {
+    type: Number,
+    required: true
+  },
+  taxYear1: {
+    type: String,
+    required: true
+  },
+  taxYear2: {
+    type: String,
+    required: true
+  }
+})
 const emit = defineEmits(['openTaxResultModal', 'closeTaxPayerModal'])
 
 function keydownEventlistener (event) {
