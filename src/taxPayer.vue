@@ -17,8 +17,8 @@
           <select v-model.lazy.number="taxPayerMap.get(props.index).martialStatus">
             <option :value="0">單身或夫婦分別評稅</option>
             <option :value="1">夫婦合併評稅</option>
-            <option :value="2">於{{props.taxYear1}}課稅年度開始單親</option>
-            <option :value="3">於整個{{props.taxYear1}}課稅年度單親</option>
+            <option :value="2">於{{taxYear1}}課稅年度開始單親</option>
+            <option :value="3">於整個{{taxYear1}}課稅年度單親</option>
           </select>
           </td>
         </tr>
@@ -31,15 +31,15 @@
           <td><input v-model.lazy="taxPayerMap.get(props.index).mpf" type="text" pattern="[0-9,]*[0-9]" /></td>
         </tr>
         <tr>
-          <td>適用於{{props.taxYear1}}年度的其他扣除項目</td>
+          <td>適用於{{taxYear1}}年度的其他扣除項目</td>
           <td><input v-model.lazy="taxPayerMap.get(props.index).otherDeductionsThisYear" type="text" pattern="[0-9,]*[0-9]" /></td>
         </tr>
         <tr>
-          <td>適用於{{props.taxYear2}}年度的其他扣除項目</td>
+          <td>適用於{{taxYear2}}年度的其他扣除項目</td>
           <td><input v-model.lazy="taxPayerMap.get(props.index).otherDeductionsNextYear" type="text" pattern="[0-9,]*[0-9]" /></td>
         </tr>
         <tr>
-          <td><span class="comment" title="請參閱上年稅單暫繳稅項目">{{props.taxYear1}}年度暫繳稅實額</span></td>
+          <td><span class="comment" title="請參閱上年稅單暫繳稅項目">{{taxYear1}}年度暫繳稅實額</span></td>
           <td><input v-model.lazy="taxPayerMap.get(props.index).provisionalTax" type="text" pattern="[0-9,]*[0-9]" /></td>
         </tr>
         <tr>
@@ -60,7 +60,7 @@
           </td>
         </tr>
         <tr>
-          <td>受供養健全兄弟姊妹數目<br/>（{{props.taxYear2}}年度失去資格）</td>
+          <td>受供養健全兄弟姊妹數目<br/>（{{taxYear2}}年度失去資格）</td>
           <td><input v-model.lazy.number="taxPayerMap.get(props.index).siblings18" type="number" min="0" /></td>
         </tr>
         <tr>
@@ -68,15 +68,15 @@
           <td><input v-model.lazy.number="taxPayerMap.get(props.index).children" type="number" min="0" /></td>
         </tr>
         <tr>
-          <td>子女數目<br/>（{{props.taxYear2}}年度失去資格）</td>
+          <td>子女數目<br/>（{{taxYear2}}年度失去資格）</td>
           <td><input v-model.lazy.number="taxPayerMap.get(props.index).children18" type="number" min="0" /></td>
         </tr>
         <tr>
-          <td>{{props.taxYear1}}年度新生子女數目</td>
+          <td>{{taxYear1}}年度新生子女數目</td>
           <td><input v-model.lazy.number="taxPayerMap.get(props.index).newbornChildrenThisYear" type="number" min="0" /></td>
         </tr>
         <tr>
-          <td>{{props.taxYear2}}年度新生子女數目</td>
+          <td>{{taxYear2}}年度新生子女數目</td>
           <td><input v-model.lazy.number="taxPayerMap.get(props.index).newbornChildrenNextYear" type="number" min="0" /></td>
         </tr>
         <tr>
@@ -116,6 +116,7 @@ table {
 </style>
 
 <script setup>
+import { inject } from 'vue'
 import { storeToRefs } from 'pinia'
 import { VueFinalModal } from 'vue-final-modal'
 import { useTaxStore } from '@/stores/tax'
@@ -127,16 +128,12 @@ const props = defineProps({
   index: {
     type: Number,
     required: true
-  },
-  taxYear1: {
-    type: String,
-    required: true
-  },
-  taxYear2: {
-    type: String,
-    required: true
   }
 })
+
+const taxYear1 = inject('taxYear1')
+const taxYear2 = inject('taxYear2')
+
 const emit = defineEmits(['openTaxResultModal', 'closeTaxPayerModal'])
 
 function keydownEventlistener (event) {

@@ -5,7 +5,7 @@
       <table>
         <tbody>
           <tr>
-            <th colspan="2">{{props.taxYear1}}年度</th>
+            <th colspan="2">{{taxYear1}}年度</th>
           </tr>
           <tr>
             <th colspan="2">累進稅率</th>
@@ -106,14 +106,14 @@
             <th class="beforeline">{{formatNumber(props.taxResult.taxThisYear.stdRateTax)}}</th>
           </tr>
           <tr>
-            <th colspan="2" class="line">{{props.taxYear1}}年度最終稅款</th>
+            <th colspan="2" class="line">{{taxYear1}}年度最終稅款</th>
           </tr>
           <tr>
             <td>適用稅率：{{props.taxResult.taxThisYear.rate === "progressiveTax" ? "累進稅率" : "標準稅率"}}</td>
             <td>{{formatNumber(props.taxResult.taxThisYear.tax)}}</td>
           </tr>
           <tr>
-            <td>減：{{props.taxYear1}}年度暫繳稅實額</td>
+            <td>減：{{taxYear1}}年度暫繳稅實額</td>
             <td>{{formatNumber(props.taxResult.taxThisYearProvisional)}}</td>
           </tr>
           <tr>
@@ -121,7 +121,7 @@
             <td>{{formatNumber(props.taxResult.rebate)}}</td>
           </tr>
           <tr>
-            <th>{{props.taxYear1}}年度最終稅款</th>
+            <th>{{taxYear1}}年度最終稅款</th>
             <th>{{formatNumber(props.taxResult.taxThisYearFinal)}}</th>
           </tr>
         </tbody>
@@ -131,7 +131,7 @@
       <table>
         <tbody>
           <tr>
-            <th colspan="2">{{props.taxYear2}}年度</th>
+            <th colspan="2">{{taxYear2}}年度</th>
           </tr>
           <tr>
             <th colspan="2">累進稅率</th>
@@ -232,7 +232,7 @@
             <th class="beforeline">{{formatNumber(props.taxResult.taxNextYearProvisional.stdRateTax)}}</th>
           </tr>
           <tr>
-            <th colspan="2" class="line">{{props.taxYear1}}年度暫繳稅</th>
+            <th colspan="2" class="line">{{taxYear1}}年度暫繳稅</th>
           </tr>
           <tr>
             <td>適用稅率：{{props.taxResult.taxNextYearProvisional.rate === "progressiveTax" ? "累進稅率" : "標準稅率"}}</td>
@@ -247,7 +247,7 @@
             <td>&nbsp;</td>
           </tr>
           <tr>
-            <th>{{props.taxYear2}}年度暫繳稅</th>
+            <th>{{taxYear2}}年度暫繳稅</th>
             <th>{{formatNumber(props.taxResult.taxNextYearProvisional.tax)}}</th>
           </tr>
         </tbody>
@@ -314,7 +314,7 @@ table {
 </style>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { VueFinalModal } from 'vue-final-modal'
 
 const numberFormatter = new Intl.NumberFormat()
@@ -323,17 +323,12 @@ const props = defineProps({
   taxResult: {
     type: Object,
     required: true
-  },
-  taxYear1: {
-    type: String,
-    required: true
-  },
-  taxYear2: {
-    type: String,
-    required: true
   }
 })
 const emit = defineEmits(['closeTaxResultModal', 'backToTaxPayerModal'])
+
+const taxYear1 = inject('taxYear1')
+const taxYear2 = inject('taxYear2')
 
 function keydownEventlistener (event) {
   if (event.key === 'Backspace') {

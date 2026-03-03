@@ -77,11 +77,10 @@
     </div>
   </div>
 </div>
-<TaxPayerComponent modalId="taxPayerComponent" :tax-year1="taxYear1" :tax-year2="taxYear2" :index="showTaxPayerIndex" 
+<TaxPayerComponent modalId="taxPayerComponent" :index="showTaxPayerIndex" 
   :model-value="false" @closeTaxPayerModal="closeTaxPayerModal()" @openTaxResultModal="openTaxResultModal()" />
-<TaxResultComponent modalId="taxResultComponent" :tax-year1="taxYear1" :tax-year2="taxYear2" 
-  :model-value="false" :taxResult="taxPayerResult.get(showTaxPayerIndex)" @closeTaxResultModal="closeTaxResultModal()"
-  @backToTaxPayerModal="backToTaxPayerModal()" />
+<TaxResultComponent modalId="taxResultComponent" :taxResult="taxPayerResult.get(showTaxPayerIndex)" 
+  :model-value="false" @closeTaxResultModal="closeTaxResultModal()" @backToTaxPayerModal="backToTaxPayerModal()" />
 </template>
 
 <style>
@@ -155,7 +154,7 @@ input[type=number] {
 </style>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { useVfm } from 'vue-final-modal'
 import { useTaxStore } from '@/stores/tax'
 import { storeToRefs } from 'pinia'
@@ -166,9 +165,10 @@ import TaxResultComponent from '@/taxResult.vue'
 
 const vfm = useVfm()
 
+const taxYear1 = inject('taxYear1')
+const taxYear2 = inject('taxYear2')
+
 // component data
-const taxYear1 = ref('2025/26')
-const taxYear2 = ref('2026/27')
 const showTaxPayerIndex = ref(1)
 const taxPayerResult = ref(new Map())
 const totalSiblings = ref(0)
