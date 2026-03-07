@@ -185,7 +185,7 @@ function formatNumber (num) {
 }
 
 function optimizeTax () {
-  autocalculate(store, totalSiblings.value, totalSiblings18.value, totalDisabledSiblings.value)
+  autocalculate(totalSiblings.value, totalSiblings18.value, totalDisabledSiblings.value)
   computeTax()
 }
 

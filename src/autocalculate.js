@@ -2,8 +2,10 @@
 
 import combinatorics from './combinatorics.js'
 import taxrule from './taxrule.js'
+import { useTaxStore } from '@/stores/tax'
 
-export function autocalculate (store, totalSiblings, totalSiblings18, totalDisabledSiblings) {
+export function autocalculate (totalSiblings, totalSiblings18, totalDisabledSiblings) {
+  const store = useTaxStore()
   const parentList = []
   const taxpayerList = []
   let minimumState = null
