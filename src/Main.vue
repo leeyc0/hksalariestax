@@ -77,9 +77,9 @@
     </div>
   </div>
 </div>
-<TaxPayerComponent modalId="taxPayerComponent" :index="showTaxPayerIndex" 
+<TaxPayerComponent modalId="taxPayerComponent" :index="showTaxPayerIndex"
   :model-value="false" @closeTaxPayerModal="closeTaxPayerModal()" @openTaxResultModal="openTaxResultModal()" />
-<TaxResultComponent modalId="taxResultComponent" :taxResult="taxPayerResult.get(showTaxPayerIndex)" 
+<TaxResultComponent modalId="taxResultComponent" :taxResult="taxPayerResult.get(showTaxPayerIndex)"
   :model-value="false" @closeTaxResultModal="closeTaxResultModal()" @backToTaxPayerModal="backToTaxPayerModal()" />
 </template>
 
@@ -232,26 +232,26 @@ function setParentLivingTogether (event, parentId, taxPayerId) {
 
 function openTaxPayerButton (i) {
   showTaxPayerIndex.value = i
-  vfm.open("taxPayerComponent")
+  vfm.open('taxPayerComponent')
 }
 
 function closeTaxPayerModal () {
-  vfm.close("taxPayerComponent")
+  vfm.close('taxPayerComponent')
 }
 
 function openTaxResultModal () {
   computeTax()
-  vfm.close("taxPayerComponent")
-  vfm.open("taxResultComponent")
+  vfm.close('taxPayerComponent')
+  vfm.open('taxResultComponent')
 }
 
 function closeTaxResultModal () {
-  vfm.close("taxResultComponent")
+  vfm.close('taxResultComponent')
 }
 
 function backToTaxPayerModal () {
-  vfm.close("taxResultComponent")
-  vfm.open("taxPayerComponent")
+  vfm.close('taxResultComponent')
+  vfm.open('taxPayerComponent')
 }
 
 computeTax()
