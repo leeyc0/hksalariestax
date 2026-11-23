@@ -1,5 +1,18 @@
 'use strict'
 
+/*
+  Coerces a dependent-count field to a non-negative integer.
+  Number inputs store '' when cleared, and plain '+' sums would then
+  concatenate strings instead of adding numbers (e.g. 1 + '' + 1 -> '11').
+*/
+function toCount (value) {
+  const num = Number(value)
+  if (!Number.isFinite(num) || num < 0) {
+    return 0
+  }
+  return Math.floor(num)
+}
+
 class TaxRule {
   /*
     Constructor
@@ -161,9 +174,9 @@ class TaxRule {
   calculateSiblingAllowance (taxpayer) {
     let siblings = 0
     if (this.provisionalYear) {
-      siblings = taxpayer.siblings + taxpayer.disabledSiblings
+      siblings = toCount(taxpayer.siblings) + toCount(taxpayer.disabledSiblings)
     } else {
-      siblings = taxpayer.siblings + taxpayer.disabledSiblings + taxpayer.siblings18
+      siblings = toCount(taxpayer.siblings) + toCount(taxpayer.disabledSiblings) + toCount(taxpayer.siblings18)
     }
     return this.siblingAllowance * siblings
   }
@@ -175,7 +188,7 @@ class TaxRule {
     returns: calculated Disabled dependant allowance
   */
   calculateDisabledDependentAllowance (taxpayer, parents) {
-    let disabledDependents = taxpayer.disabledSiblings + taxpayer.otherDisabledDependants
+    let disabledDependents = toCount(taxpayer.disabledSiblings) + toCount(taxpayer.otherDisabledDependants)
     disabledDependents += parents.reduce(
       function (count, parentObj) {
         if (parentObj.age === 0) {
@@ -200,11 +213,11 @@ class TaxRule {
     if (this.provisionalYear) {
       /* newbornChildrenNextYear:
          children born from the start of provisionalYear until the time of tax reporting */
-      children = taxpayer.children + taxpayer.newbornChildrenThisYear + taxpayer.newbornChildrenNextYear
-      newbornChildren = taxpayer.newbornChildrenNextYear
+      children = toCount(taxpayer.children) + toCount(taxpayer.newbornChildrenThisYear) + toCount(taxpayer.newbornChildrenNextYear)
+      newbornChildren = toCount(taxpayer.newbornChildrenNextYear)
     } else {
-      children = taxpayer.children + taxpayer.children18 + taxpayer.newbornChildrenThisYear
-      newbornChildren = taxpayer.newbornChildrenThisYear
+      children = toCount(taxpayer.children) + toCount(taxpayer.children18) + toCount(taxpayer.newbornChildrenThisYear)
+      newbornChildren = toCount(taxpayer.newbornChildrenThisYear)
     }
 
     // tax rule states that maximum of 9 children can be claimed

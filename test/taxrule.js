@@ -810,6 +810,29 @@ describe("taxRebate", function() {
 
 
 
+describe("count field type coercion", function() {
+  it("should ignore cleared (empty string) sibling count fields", function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    taxpayer.siblings = '2';
+    taxpayer.siblings18 = '';
+    taxpayer.disabledSiblings = 1;
+    equal(taxRuleTest.calculateSiblingAllowance(taxpayer), 112500);
+  });
+  it("should ignore cleared (empty string) disabled dependent count fields", function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    taxpayer.disabledSiblings = '';
+    taxpayer.otherDisabledDependants = 2;
+    equal(taxRuleTest.calculateDisabledDependentAllowance(taxpayer, []), 150000);
+  });
+  it("should coerce string children counts", function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    taxpayer.children = '2';
+    taxpayer.newbornChildrenThisYear = '';
+    taxpayer.newbornChildrenNextYear = '1';
+    deepStrictEqual(taxRuleTest.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 200000, singleParentAllowance: 0});
+  });
+});
+
 describe("taxPayable both year", function() {
   let parents = [
     {age: 2, livingTogether: false},
