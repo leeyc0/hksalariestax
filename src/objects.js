@@ -45,12 +45,17 @@ export class TaxPayer {
 
 /*
   name: name
-  age: one of the following values:
-       0 = disabled parent, age irrelevant
-       1 = reach 55 in next year
-       2 = reach 55 in prev year
-       3 = reach 65 in next year
-       4 = reach 65 in prev year
+  age: one of the following values, matching the options in Main.vue.
+       Allowance thresholds: 55 = half-rate (55-59) allowance,
+                             60 = full allowance.
+       "this year" = current tax year, "next year" = provisional tax year:
+       0 = disabled parent, age irrelevant: full allowance both years
+       1 = reach 54 this year (55 next year):
+           ineligible this year, half-rate allowance next year
+       2 = reach 55 this year: half-rate allowance both years
+       3 = reach 59 this year (60 next year):
+           half-rate allowance this year, full allowance next year
+       4 = reach 60 this year: full allowance both years
   livingTogether: Map of (taxpayerid, livingTogether(boolean))
   claimedBy: claimed by taxpayerid
 */
