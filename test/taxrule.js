@@ -796,6 +796,23 @@ describe("calculateTax", function() {
     let actualResult = taxRuleTest.calculateTax(taxpayer,[]);
     deepStrictEqual(actualResult, expectedResult);
   });
+
+  it("no zero-remainder band when progressive taxable income lands on a band boundary", function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    taxpayer.income = 177000; // taxable income is exactly 45000
+    let actualResult = taxRuleTest.calculateTax(taxpayer, []);
+    deepStrictEqual(actualResult.progressiveTaxBreakdown, [{step: 45000, rate: 2, tax: 900}]);
+    equal(actualResult.progressiveTax, 900);
+    equal(actualResult.tax, 900);
+  });
+
+  it("no zero-remainder band when standard rate income lands on a band boundary", function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    taxpayer.income = 5000000; // standard rate net income is exactly 5000000
+    let actualResult = taxRuleTest.calculateTax(taxpayer, []);
+    deepStrictEqual(actualResult.stdRateTaxBreakdown, [{step: 5000000, rate: 15, tax: 750000}]);
+    equal(actualResult.stdRateTax, 750000);
+  });
 });
 
 describe("taxRebate", function() {

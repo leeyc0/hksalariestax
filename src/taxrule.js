@@ -287,7 +287,12 @@ class TaxRule {
       if (taxableIncome < stepTotal + i.step) {
         const remainder = taxableIncome - stepTotal
         const stepTax = Math.floor(remainder * i.rate / 100)
-        progressiveTaxBreakdown.push({ step: remainder, rate: i.rate, tax: stepTax })
+        // when taxable income lands exactly on a band boundary the final
+        // partial band is $0: skip it, unless it is the only band (a zero
+        // taxable income still shows one $0 band)
+        if (remainder > 0 || progressiveTaxBreakdown.length === 0) {
+          progressiveTaxBreakdown.push({ step: remainder, rate: i.rate, tax: stepTax })
+        }
         progressiveTax += stepTax
         break
       } else {
@@ -306,7 +311,10 @@ class TaxRule {
       if (taxableIncomeStdRate < stepTotal + i.step) {
         const remainder = taxableIncomeStdRate - stepTotal
         const stepTax = Math.floor(remainder * i.rate / 100)
-        stdRateTaxBreakdown.push({ step: remainder, rate: i.rate, tax: stepTax })
+        // skip zero-remainder band, see progressive rate loop above
+        if (remainder > 0 || stdRateTaxBreakdown.length === 0) {
+          stdRateTaxBreakdown.push({ step: remainder, rate: i.rate, tax: stepTax })
+        }
         stdRateTax += stepTax
         break
       } else {
