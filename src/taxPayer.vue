@@ -24,23 +24,23 @@
         </tr>
         <tr>
           <td>總入息</td>
-          <td><input v-model.lazy="taxPayerMap.get(props.index).income" type="text" pattern="[0-9,]*[0-9]" /></td>
+          <td><input :value="formatAmount(taxPayerMap.get(props.index).income)" type="text" pattern="[0-9,]*" @change="updateAmount(taxPayerMap.get(props.index), 'income', $event)" /></td>
         </tr>
         <tr>
           <td><span class="comment" title="報稅表申報項目位於「第4部薪俸稅 → 4.3 扣除 → (4)以僱員身分付給認可退休計劃的強制性供款」">強積金/認可退休計劃僱員供款</span></td>
-          <td><input v-model.lazy="taxPayerMap.get(props.index).mpf" type="text" pattern="[0-9,]*[0-9]" /></td>
+          <td><input :value="formatAmount(taxPayerMap.get(props.index).mpf)" type="text" pattern="[0-9,]*" @change="updateAmount(taxPayerMap.get(props.index), 'mpf', $event)" /></td>
         </tr>
         <tr>
           <td>適用於{{taxYear1}}年度的其他扣除項目</td>
-          <td><input v-model.lazy="taxPayerMap.get(props.index).otherDeductionsThisYear" type="text" pattern="[0-9,]*[0-9]" /></td>
+          <td><input :value="formatAmount(taxPayerMap.get(props.index).otherDeductionsThisYear)" type="text" pattern="[0-9,]*" @change="updateAmount(taxPayerMap.get(props.index), 'otherDeductionsThisYear', $event)" /></td>
         </tr>
         <tr>
           <td>適用於{{taxYear2}}年度的其他扣除項目</td>
-          <td><input v-model.lazy="taxPayerMap.get(props.index).otherDeductionsNextYear" type="text" pattern="[0-9,]*[0-9]" /></td>
+          <td><input :value="formatAmount(taxPayerMap.get(props.index).otherDeductionsNextYear)" type="text" pattern="[0-9,]*" @change="updateAmount(taxPayerMap.get(props.index), 'otherDeductionsNextYear', $event)" /></td>
         </tr>
         <tr>
           <td><span class="comment" title="請參閱上年稅單暫繳稅項目">{{taxYear1}}年度暫繳稅實額</span></td>
-          <td><input v-model.lazy="taxPayerMap.get(props.index).provisionalTax" type="text" pattern="[0-9,]*[0-9]" /></td>
+          <td><input :value="formatAmount(taxPayerMap.get(props.index).provisionalTax)" type="text" pattern="[0-9,]*" @change="updateAmount(taxPayerMap.get(props.index), 'provisionalTax', $event)" /></td>
         </tr>
         <tr>
           <td>受供養父母/祖父母/外祖父母</td>
@@ -135,6 +135,17 @@ const taxYear1 = inject('taxYear1')
 const taxYear2 = inject('taxYear2')
 
 const emit = defineEmits(['openTaxResultModal', 'closeTaxPayerModal'])
+
+const numberFormatter = new Intl.NumberFormat()
+
+function formatAmount (num) {
+  return numberFormatter.format(Number(num) || 0)
+}
+
+function updateAmount (taxPayer, field, event) {
+  const num = Number(String(event.target.value).replace(/,/g, ''))
+  taxPayer[field] = Number.isFinite(num) && num >= 0 ? Math.floor(num) : 0
+}
 
 function keydownEventlistener (event) {
   if (event.key === 'Enter') {

@@ -279,7 +279,7 @@ class TaxRule {
         break
       } else {
         stepTotal += i.step
-        const stepTax = i.step * i.rate / 100
+        const stepTax = Math.floor(i.step * i.rate / 100)
         progressiveTaxBreakdown.push({ step: i.step, rate: i.rate, tax: stepTax })
         progressiveTax += stepTax
       }
@@ -298,7 +298,7 @@ class TaxRule {
         break
       } else {
         stepTotal += i.step
-        const stepTax = i.step * i.rate / 100
+        const stepTax = Math.floor(i.step * i.rate / 100)
         stdRateTaxBreakdown.push({ step: i.step, rate: i.rate, tax: stepTax })
         stdRateTax += stepTax
       }
@@ -337,7 +337,7 @@ class TaxRule {
 function taxRebate (tax) {
   const rebateRate = 100
   const maxRebate = 3000
-  let rebate = Math.ceil(tax * rebateRate / 100)
+  let rebate = Math.floor(tax * rebateRate / 100)
 
   if (rebate > maxRebate) {
     rebate = maxRebate
