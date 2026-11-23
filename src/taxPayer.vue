@@ -14,7 +14,7 @@
         <tr>
           <td>夫婦合併評稅/單親</td>
           <td>
-          <select v-model.lazy.number="taxPayerMap.get(props.index).martialStatus">
+          <select v-model.lazy.number="taxPayerMap.get(props.index).maritalStatus">
             <option :value="0">單身或夫婦分別評稅</option>
             <option :value="1">夫婦合併評稅</option>
             <option :value="2">於{{taxYear1}}課稅年度開始單親</option>

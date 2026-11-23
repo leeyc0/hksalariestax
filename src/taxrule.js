@@ -72,7 +72,7 @@ class TaxRule {
   calculateMpfDeduction (taxpayer) {
     let mpfDeduction = Math.floor(taxpayer.mpf * this.mpfMaxMultiplier)
     let mpfMax = this.mpfMax
-    if (taxpayer.martialStatus === 1) {
+    if (taxpayer.maritalStatus === 1) {
       mpfMax *= 2
     }
     if (mpfDeduction > mpfMax) {
@@ -95,7 +95,7 @@ class TaxRule {
       nonLivingTogether55: 0
     }
 
-    // count total parents, need to distinglish between two tax years
+    // count total parents, need to distinguish between two tax years
     if (this.provisionalYear) {
       parents.reduce(
         function (parentCountAccu, parentObj) {
@@ -222,11 +222,11 @@ class TaxRule {
 
     if (childAllowance > 0) {
       if (this.provisionalYear) {
-        if (taxpayer.martialStatus === 2 || taxpayer.martialStatus === 3) {
+        if (taxpayer.maritalStatus === 2 || taxpayer.maritalStatus === 3) {
           singleParentAllowance = this.singleParentAllowance
         }
       } else {
-        if (taxpayer.martialStatus === 3) {
+        if (taxpayer.maritalStatus === 3) {
           singleParentAllowance = this.singleParentAllowance
         }
       }
@@ -247,8 +247,8 @@ class TaxRule {
 
     // progressive rate: calculate taxable income
     const mpfFinal = this.calculateMpfDeduction(taxpayer)
-    const basicAllowance = taxpayer.martialStatus !== 1 ? this.basicAllowance : 0
-    const marriedAllowance = taxpayer.martialStatus === 1 ? this.marriedAllowance : 0
+    const basicAllowance = taxpayer.maritalStatus !== 1 ? this.basicAllowance : 0
+    const marriedAllowance = taxpayer.maritalStatus === 1 ? this.marriedAllowance : 0
     const personalDisabilityAllowance = taxpayer.disabledPerson ? this.personalDisabilityAllowance : 0
     const parentAllowance = this.calculateParentAllowance(parents)
     const siblingAllowance = this.calculateSiblingAllowance(taxpayer)

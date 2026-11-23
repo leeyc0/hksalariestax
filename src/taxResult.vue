@@ -36,7 +36,7 @@
           </tr>
           <tr>
             <td>減：供養兄弟姊妹免稅額</td>
-            <td>{{formatNumber(props.taxResult.taxThisYear.siblingAllowance | formatNumber)}}</td>
+            <td>{{formatNumber(props.taxResult.taxThisYear.siblingAllowance)}}</td>
           </tr>
           <tr>
             <td>減：子女免稅額</td>
@@ -162,7 +162,7 @@
           </tr>
           <tr>
             <td>減：供養兄弟姊妹免稅額</td>
-            <td>{{formatNumber(props.taxResult.taxNextYearProvisional.siblingAllowance | formatNumber)}}</td>
+            <td>{{formatNumber(props.taxResult.taxNextYearProvisional.siblingAllowance)}}</td>
           </tr>
           <tr>
             <td>減：子女免稅額</td>

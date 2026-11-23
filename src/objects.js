@@ -2,20 +2,20 @@
 
 /*
   name: name
-  martialStatus:
-    0: Seperate Taxation
+  maritalStatus:
+    0: Separate Taxation
     1: Joint Assessment
     2: Single Parent at next year
     3: Single Parent at previous year
   income: income
   mpf: MPF paid by employee
-  otherDeductionsThisYear: all other deductions appliable to this year
+  otherDeductionsThisYear: all other deductions applicable to this year
   otherDeductionsNextYear: all other deductions applicable to next year
   siblings: number of dependent brother or sisters
-  siblings18: number of dependent brother or sisters illegible in next year
+  siblings18: number of dependent brother or sisters eligible in next year
   disabledSiblings: number of disabled siblings
-  chidren: number of childen (not newborn)
-  children18: number of children illegible in next year
+  children: number of children (not newborn)
+  children18: number of children eligible in next year
   newbornChildren: number of newborn children
   otherDisabledDependants: number of disabled dependants (not siblings nor parents)
   provisionalTax: paid provisional tax
@@ -24,7 +24,7 @@
 export class TaxPayer {
   constructor (name) {
     this.name = name
-    this.martialStatus = 0
+    this.maritalStatus = 0
     this.income = 0
     this.mpf = 0
     this.otherDeductionsThisYear = 0

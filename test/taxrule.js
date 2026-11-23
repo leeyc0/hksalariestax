@@ -65,7 +65,7 @@ var taxRuleDummy = new TaxRule({
   
 var taxpayerTemplate = {
   name : "dummy",
-  martialStatus : 0,
+  maritalStatus : 0,
   income : 0,
   mpf : 0,
   otherDeductionsThisYear : 0,
@@ -110,7 +110,7 @@ describe('calculateMpfDeduction', function() {
   });
   it('should return same amount as input when multiplier=1 and input<=cap (joint assessment)', function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
-    taxpayer.martialStatus = 1;
+    taxpayer.maritalStatus = 1;
     taxpayer.mpf = 30000;
     equal(taxRuleTest.calculateMpfDeduction(taxpayer), 30000);
   });
@@ -121,7 +121,7 @@ describe('calculateMpfDeduction', function() {
   });
   it('should return capped amount as input when multiplier=1 and input>cap (joint assessment)', function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
-    taxpayer.martialStatus = 1;
+    taxpayer.maritalStatus = 1;
     taxpayer.mpf = 40000;
     equal(taxRuleTest.calculateMpfDeduction(taxpayer), 36000);
   });
@@ -207,7 +207,7 @@ describe("calculateChildAllowanceAndSingleParentAllowance", function() {
   });
   it("test single parent allowance: single parent both year", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
-    taxpayer.martialStatus = 3;
+    taxpayer.maritalStatus = 3;
     taxpayer.children = 1;
     taxpayer.newbornChildrenThisYear = 0;
     taxpayer.newbornChildrenNextYear = 0;
@@ -217,7 +217,7 @@ describe("calculateChildAllowanceAndSingleParentAllowance", function() {
   });
   it("test single parent allowance: single parent next year only", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
-    taxpayer.martialStatus = 2;
+    taxpayer.maritalStatus = 2;
     taxpayer.children = 1;
     taxpayer.newbornChildrenThisYear = 0;
     taxpayer.newbornChildrenNextYear = 0;
@@ -275,7 +275,7 @@ describe("calculateTax", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     let expectedResult = Object.assign({}, expectedResultTemplate);
     taxpayer.income = 264200;
-    taxpayer.martialStatus = 1;
+    taxpayer.maritalStatus = 1;
     expectedResult.income = 264200;
     expectedResult.taxableIncome = 200;
     expectedResult.taxableIncomeStdRate =  264200;
@@ -299,7 +299,7 @@ describe("calculateTax", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     let expectedResult = Object.assign({}, expectedResultTemplate);
     taxpayer.income = 132300;
-    taxpayer.martialStatus = 2;
+    taxpayer.maritalStatus = 2;
     expectedResult.income = 132300;
     expectedResult.taxableIncome = 300;
     expectedResult.taxableIncomeStdRate =  132300;
@@ -323,7 +323,7 @@ describe("calculateTax", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     let expectedResult = Object.assign({}, expectedResultTemplate);
     taxpayer.income = 364400;
-    taxpayer.martialStatus = 2;
+    taxpayer.maritalStatus = 2;
     taxpayer.children = 1;
     expectedResult.income = 364400;
     expectedResult.taxableIncome = 132400;
@@ -360,7 +360,7 @@ describe("calculateTax", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     let expectedResult = Object.assign({}, expectedResultTemplate);
     taxpayer.income = 364500;
-    taxpayer.martialStatus = 3;
+    taxpayer.maritalStatus = 3;
     taxpayer.children = 1;
     expectedResult.income = 364500;
     expectedResult.taxableIncome = 500;
@@ -820,7 +820,7 @@ describe("taxPayable both year", function() {
   
   let taxpayer = {
     name : "dummy",
-    martialStatus : 0,
+    maritalStatus : 0,
     income : 824000,
     mpf : 1000,
     otherDeductionsThisYear : 20000,

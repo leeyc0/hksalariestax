@@ -1,6 +1,6 @@
 'use strict'
 
-function * distinglishableBallInBoxes (balls, boxes) {
+function * distinguishableBallInBoxes (balls, boxes) {
   let counter = 0
   const numberOfBalls = balls.length
   const numberOfBoxes = boxes.length
@@ -20,7 +20,7 @@ function * distinglishableBallInBoxes (balls, boxes) {
   }
 }
 
-function * indistinglishableBallInBoxes (numberOfBalls, boxes) {
+function * indistinguishableBallInBoxes (numberOfBalls, boxes) {
   let i = 0
   let j = 0
   const numberOfBoxes = boxes.length
@@ -65,6 +65,6 @@ function * indistinglishableBallInBoxes (numberOfBalls, boxes) {
 }
 
 export default {
-  distinglishableBallInBoxes,
-  indistinglishableBallInBoxes
+  distinguishableBallInBoxes,
+  indistinguishableBallInBoxes
 }
