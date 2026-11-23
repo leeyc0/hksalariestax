@@ -31,7 +31,7 @@ class TaxRule {
     siblingAllowance:            Dependent Brother or Dependent Sister Allowance
     disabledDependentAllowance:  Disabled dependant allowance
     childAllowance:              Child Allowance
-    newbornChildExtraAllowance:  Newborn Child Extra Allowance
+    newbornChildAdditionalAllowance:  Newborn Child Extra Allowance
     provisionalYear:             Provision tax year
   */
   constructor ({

@@ -16,7 +16,8 @@
   disabledSiblings: number of disabled siblings
   children: number of children (not newborn)
   children18: number of children eligible in next year
-  newbornChildren: number of newborn children
+  newbornChildrenThisYear: number of newborn children this year
+  newbornChildrenNextYear: number of newborn children next year
   otherDisabledDependants: number of disabled dependants (not siblings nor parents)
   provisionalTax: paid provisional tax
   disabledPerson: Personal disability

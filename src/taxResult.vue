@@ -232,7 +232,7 @@
             <th class="beforeline">{{formatNumber(props.taxResult.taxNextYearProvisional.stdRateTax)}}</th>
           </tr>
           <tr>
-            <th colspan="2" class="line">{{taxYear1}}年度暫繳稅</th>
+            <th colspan="2" class="line">{{taxYear2}}年度暫繳稅</th>
           </tr>
           <tr>
             <td>適用稅率：{{props.taxResult.taxNextYearProvisional.rate === "progressiveTax" ? "累進稅率" : "標準稅率"}}</td>
