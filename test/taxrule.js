@@ -164,14 +164,14 @@ describe("calculateSiblingAllowance", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     taxpayer.siblings = 1;
     taxpayer.siblings18 = 2;
-    taxpayer.disabledSiblings = 3,
+    taxpayer.disabledSiblings = 3;
     equal(taxRuleTest.calculateSiblingAllowance(taxpayer), 225000);
   });
   it("should calculate correct amount: next year", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);
     taxpayer.siblings = 2;
     taxpayer.siblings18 = 2;
-    taxpayer.disabledSiblings = 3,
+    taxpayer.disabledSiblings = 3;
     equal(taxRuleDummy.calculateSiblingAllowance(taxpayer), 187500);
   });
 });
