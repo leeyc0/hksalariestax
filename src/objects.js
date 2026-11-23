@@ -12,7 +12,7 @@
   otherDeductionsThisYear: all other deductions applicable to this year
   otherDeductionsNextYear: all other deductions applicable to next year
   siblings: number of dependent brother or sisters
-  siblings18: number of dependent brother or sisters eligible in next year
+  siblings18: number of dependent brother or sisters ineligible in next year
   disabledSiblings: number of disabled siblings
   children: number of children (not newborn)
   children18: number of children eligible in next year
