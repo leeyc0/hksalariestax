@@ -53,7 +53,9 @@ export const useTaxStore = defineStore('tax', {
       if (this.taxPayerMap.size > 0) {
         const firstTaxPayerId = this.taxPayerMap.keys().next().value
         for (const parent of this.parentMap.values()) {
-          parent.claimedBy = firstTaxPayerId
+          if (parent.claimedBy === id) {
+            parent.claimedBy = firstTaxPayerId
+          }
           parent.livingTogether.delete(id)
         }
       } else {
