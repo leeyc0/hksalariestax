@@ -32,7 +32,9 @@ function * indistinguishableBallInBoxes (numberOfBalls, boxes) {
   boxOutput.set(boxes[0], numberOfBalls)
 
   while (true) {
-    yield boxOutput
+    // yield a fresh copy so callers can keep the yielded Map;
+    // boxOutput is mutated in place to produce the next combination
+    yield new Map(boxOutput)
     if (boxOutput.get(boxes[numberOfBoxes - 1]) === numberOfBalls) {
       break
     }

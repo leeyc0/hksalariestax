@@ -154,7 +154,7 @@ input[type=number] {
 </style>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, watch } from 'vue'
 import { useVfm } from 'vue-final-modal'
 import { useTaxStore } from '@/stores/tax'
 import { storeToRefs } from 'pinia'
@@ -190,11 +190,21 @@ function optimizeTax () {
 }
 
 function computeTax () {
+  // discard results of deleted taxpayers
+  for (const i of taxPayerResult.value.keys()) {
+    if (!store.taxPayerMap.has(i)) {
+      taxPayerResult.value.delete(i)
+    }
+  }
   for (const i of store.taxPayerMap.keys()) {
     const taxResult = taxrule.taxPayable(store.taxPayerMap.get(i), store.parentsClaimedByTaxpayer.get(i))
     taxPayerResult.value.set(i, taxResult)
   }
 }
+
+// displayed amounts must always reflect current store state (mutations to
+// taxpayers, parents, claims, or amounts), not only the last explicit compute
+watch(() => store.$state, computeTax, { deep: true, immediate: true })
 
 function addTaxPayer () {
   store.addTaxPayer()
@@ -253,6 +263,4 @@ function backToTaxPayerModal () {
   vfm.close('taxResultComponent')
   vfm.open('taxPayerComponent')
 }
-
-computeTax()
 </script>
