@@ -191,7 +191,17 @@ describe("calculateChildAllowanceAndSingleParentAllowance", function() {
     taxpayer.newbornChildrenThisYear = 1;
     taxpayer.newbornChildrenNextYear = 3;
     taxpayer.children18 = 1;
-    deepStrictEqual(taxRuleDummy.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 930000, singleParentAllowance: 0}); 
+    deepStrictEqual(taxRuleDummy.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 1040000, singleParentAllowance: 0}); 
+  });
+  it("should give provisional year additional allowance for children born this year (two-year claim period from 2026/27)", function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    taxpayer.newbornChildrenThisYear = 2;
+    deepStrictEqual(taxRuleDummy.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 420000, singleParentAllowance: 0}); 
+  });
+  it("should not give this year any allowance for children to be born next year", function() {
+    let taxpayer = Object.assign({}, taxpayerTemplate);
+    taxpayer.newbornChildrenNextYear = 2;
+    deepStrictEqual(taxRuleTest.calculateChildAllowanceAndSingleParentAllowance(taxpayer), {childAllowance: 0, singleParentAllowance: 0}); 
   });
   it("should cap maximum children = 9: newbornChild > 9", function() {
     let taxpayer = Object.assign({}, taxpayerTemplate);

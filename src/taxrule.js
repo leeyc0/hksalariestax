@@ -211,10 +211,14 @@ class TaxRule {
     let children = 0
     let newbornChildren = 0
     if (this.provisionalYear) {
-      /* newbornChildrenNextYear:
+      /* The additional newborn child allowance is claimable for two years of
+         assessment from 2026/27 (Budget 2026): the year of birth and the
+         year following. Children born this year therefore still attract the
+         additional allowance in the provisional year.
+         newbornChildrenNextYear:
          children born from the start of provisionalYear until the time of tax reporting */
       children = toCount(taxpayer.children) + toCount(taxpayer.newbornChildrenThisYear) + toCount(taxpayer.newbornChildrenNextYear)
-      newbornChildren = toCount(taxpayer.newbornChildrenNextYear)
+      newbornChildren = toCount(taxpayer.newbornChildrenThisYear) + toCount(taxpayer.newbornChildrenNextYear)
     } else {
       children = toCount(taxpayer.children) + toCount(taxpayer.children18) + toCount(taxpayer.newbornChildrenThisYear)
       newbornChildren = toCount(taxpayer.newbornChildrenThisYear)
